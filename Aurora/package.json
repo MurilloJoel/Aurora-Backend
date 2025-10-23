@@ -1,0 +1,35 @@
+{
+  "name": "aurora",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "types": "node",
+  "scripts": {
+    "start": "node ./dist/bin/www.js",
+    "dev": "nodemon --watch src --exec ts-node ./src/bin/www.ts",
+    "build": "tsc --project tsconfig.json",
+    "serve": "npm run build && node ./dist/bin/www.js",
+    "lint": "tsc --noEmit",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "@js-temporal/polyfill": "^0.5.1",
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "express": "^4.21.2",
+    "http-errors": "~1.6.3",
+    "morgan": "^1.10.1",
+    "pug": "^3.0.3"
+  },
+  "devDependencies": {
+    "@types/cookie-parser": "^1.4.9",
+    "@types/debug": "^4.1.12",
+    "@types/express": "^5.0.3",
+    "@types/morgan": "^1.9.10",
+    "@types/node": "^24.9.1",
+    "nodemon": "^3.1.10",
+    "rimraf": "^5.0.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}
