@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 
 const router = express.Router();
 
-// GET /api/users → Obtener todos los usuarios
+// GET users → Obtener todos los usuarios
 router.get('/', async (req: Request, res: Response) => {
   try {
     // Aquí iría la llamada al servicio o modelo que obtiene todos los usuarios
@@ -13,7 +13,7 @@ router.get('/', async (req: Request, res: Response) => {
   }
 });
 
-// GET /api/users/:id → Obtener un usuario por ID
+// GET users/:id → Obtener un usuario por ID
 router.get('/:id', async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
@@ -23,7 +23,7 @@ router.get('/:id', async (req: Request, res: Response) => {
   }
 });
 
-// POST /api/users → Crear un nuevo usuario
+// POST users → Crear un nuevo usuario
 router.post('/', async (req: Request, res: Response) => {
   const { nombre, email, passwordHash, rolId } = req.body;
   try {
@@ -43,7 +43,7 @@ router.post('/', async (req: Request, res: Response) => {
   }
 });
 
-// PUT /api/users/:id → Actualizar un usuario existente
+// PUT users/:id → Actualizar un usuario existente
 router.put('/:id', async (req: Request, res: Response) => {
   const { id } = req.params;
   const { nombre, email, passwordHash, rolId, activo } = req.body;
@@ -64,7 +64,7 @@ router.put('/:id', async (req: Request, res: Response) => {
   }
 });
 
-// DELETE /api/users/:id → Eliminar (o desactivar) un usuario
+// DELETE users/:id → Eliminar (o desactivar) un usuario
 router.delete('/:id', async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
@@ -74,7 +74,7 @@ router.delete('/:id', async (req: Request, res: Response) => {
   }
 });
 
-// POST /api/users/login → Iniciar sesión
+// POST users/login → Iniciar sesión
 router.post('/login', async (req: Request, res: Response) => {
   const { email, password } = req.body;
   try {
@@ -89,7 +89,7 @@ router.post('/login', async (req: Request, res: Response) => {
   }
 });
 
-// POST /api/users/refresh → Refrescar token JWT
+// POST users/refresh → Refrescar token JWT
 router.post('/refresh', async (req: Request, res: Response) => {
   const { tokenRefresh } = req.body;
   try {
