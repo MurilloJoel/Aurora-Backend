@@ -5,18 +5,189 @@ El proyecto utiliza `ts-node` y `nodemon` para un flujo de desarrollo rápido y 
 
 ---
 
+## 🚀 Características principales
+
+- ⚡ Arquitectura modular con soporte para módulos ESM  
+- 🧩 Desarrollo en TypeScript con tipado completo  
+- 🔁 Recarga automática mediante `nodemon`  
+- 🔐 Preparado para autenticación JWT  
+- 🧠 Estructura escalable por módulos (users, roles, productos, etc.)
+
+---
+
 ## 📦 Requisitos previos
 
 Antes de comenzar, asegúrate de tener instaladas las siguientes herramientas:
 
 - [Node.js](https://nodejs.org/) v18 o superior  
-- [npm](https://www.npmjs.com/) (se instala junto con Node.js)
-- [TypeScript](https://www.typescriptlang.org/) (opcional globalmente)
+- [npm](https://www.npmjs.com/) (se instala junto con Node.js)  
+- [TypeScript](https://www.typescriptlang.org/) (opcional globalmente)  
 - Git (para clonar el repositorio)
 
 Verifica las versiones con:
 
-```bash
-node -v
- npm -v
 ```
+node -v
+npm -v
+```
+
+---
+
+## ⚙️ Instalación y configuración
+
+**Clonar el repositorio**
+```
+git clone https://github.com/tuusuario/aurora-backend.git
+cd aurora-backend
+```
+
+**Instalar dependencias**
+```
+npm install
+```
+
+**Compilar el proyecto** (opcional en desarrollo con ts-node)
+```
+npx tsc
+```
+
+**Ejecutar en modo desarrollo**
+```
+npm run dev
+```
+
+Este comando utiliza **nodemon + ts-node** para reiniciar el servidor automáticamente ante cualquier cambio.
+
+---
+
+## 🧱 Estructura del proyecto
+
+```
+src/
+ ├── routes/
+ │    └── users.routes.ts
+ ├── controllers/
+ │    └── users.controller.ts
+ ├── models/
+ │    └── users.model.ts
+ ├── services/
+ │    └── users.service.ts
+ ├── app.ts
+ └── server.ts
+```
+
+---
+
+## 📦 Rutas
+
+### 👤 Users
+
+Ruta base: `/api/users`
+
+| Método | Endpoint | Descripción | Autenticación |
+|--------|-----------|--------------|----------------|
+| GET | `/` | Obtiene la lista de todos los usuarios | 🔓 Pública |
+| GET | `/:id` | Obtiene la información de un usuario por su ID | 🔓 Pública |
+| POST | `/` | Crea un nuevo usuario | 🔒 Privada (admin o registro controlado) |
+| PUT | `/:id` | Actualiza la información de un usuario existente | 🔒 Privada |
+| DELETE | `/:id` | Elimina o desactiva un usuario | 🔒 Privada |
+| POST | `/login` | Inicia sesión y devuelve un token JWT | 🔓 Pública |
+| POST | `/refresh` | Refresca el token JWT mediante un token de refresco válido | 🔒 Requiere tokenRefresh |
+
+---
+
+## 🧪 Ejemplos de uso
+
+**Obtener todos los usuarios**
+```
+GET http://localhost:3000/api/users
+```
+
+**Crear un nuevo usuario**
+```
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+  "nombre": "Juan Pérez",
+  "email": "juan@example.com",
+  "passwordHash": "hashSeguro",
+  "rolId": 1
+}
+```
+
+**Iniciar sesión**
+```
+POST http://localhost:3000/api/users/login
+Content-Type: application/json
+
+{
+  "email": "juan@example.com",
+  "password": "123456"
+}
+```
+
+---
+
+## 🧰 Scripts disponibles
+
+| Comando | Descripción |
+|----------|--------------|
+| `npm run dev` | Ejecuta el servidor en modo desarrollo con nodemon |
+| `npm run build` | Compila el código TypeScript en JavaScript |
+| `npm start` | Inicia el servidor compilado desde `dist/` |
+
+---
+
+## 🛡️ Seguridad y buenas prácticas
+
+- Todas las rutas sensibles deben protegerse con middleware de autenticación JWT.  
+- No guardar contraseñas en texto plano: usar **bcrypt** para el hash.  
+- Validar siempre la entrada del usuario (**express-validator** o **zod**).  
+- Mantener variables sensibles en `.env` (como claves JWT, credenciales de base de datos, etc.).
+
+---
+
+## ⚙️ Configuración del entorno (.env)
+
+Crea un archivo `.env` en la raíz del proyecto con el siguiente contenido de ejemplo:
+
+```
+# Configuración general
+PORT=3000
+NODE_ENV=development
+
+# Base de datos
+DATABASE_URL=postgresql://usuario:password@localhost:5432/aurora_db
+
+# JWT
+JWT_SECRET=tu_clave_super_segura
+JWT_EXPIRES_IN=1h
+REFRESH_TOKEN_SECRET=otra_clave_aun_mas_segura
+REFRESH_TOKEN_EXPIRES_IN=7d
+```
+
+---
+
+## 🧑‍💻 Contribución
+
+1. Haz un fork del repositorio  
+2. Crea una rama con tu nueva funcionalidad  
+   ```
+   git checkout -b feature/nueva-funcionalidad
+   ```
+3. Realiza los cambios y haz commit  
+   ```
+   git commit -m "Añade nueva funcionalidad"
+   ```
+4. Envía un Pull Request 🎉
+
+---
+
+## 🪪 Licencia
+
+Este proyecto se distribuye bajo la licencia **MIT**.  
+Si reutilizas este código, por favor incluye una referencia a **Aurora Backend**.
+```
+
+¿Quieres que te prepare también el contenido del archivo `Dockerfile` y `docker-compose.yml` para incluirlos en el proyecto?
