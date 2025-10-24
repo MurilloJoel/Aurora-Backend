@@ -6,7 +6,7 @@
   "types": "node",
   "scripts": {
     "start": "node ./dist/bin/www.js",
-    "dev": "nodemon --watch src --exec ts-node ./src/bin/www.ts",
+    "dev": "nodemon --watch src --exec node --loader ts-node/esm ./src/bin/www.ts",
     "build": "tsc --project tsconfig.json",
     "serve": "npm run build && node ./dist/bin/www.js",
     "lint": "tsc --noEmit",
