@@ -63,17 +63,35 @@ Este comando utiliza **nodemon + ts-node** para reiniciar el servidor automátic
 ## 🧱 Estructura del proyecto
 
 ```
-src/
- ├── routes/
- │    └── users.routes.ts
- ├── controllers/
- │    └── users.controller.ts
- ├── models/
- │    └── users.model.ts
- ├── services/
- │    └── users.service.ts
- ├── app.ts
- └── server.ts
+aurora-backend/
+├── node_modules/
+├── public/
+├── src/
+│   ├── bin/
+│   │   └── www.ts
+│   ├── entities/
+│   │   ├── chats.ts
+│   │   ├── invalidTokens.ts
+│   │   ├── messages.ts
+│   │   ├── permissions.ts
+│   │   ├── products.ts
+│   │   ├── roles.ts
+│   │   ├── rolesPermissions.ts
+│   │   └── users.ts
+│   ├── routes/
+│   │   ├── index.ts
+│   │   └── users.ts
+│   └── app.ts
+├── views/
+│   ├── error.jade
+│   ├── index.jade
+│   └── layout.jade
+├── .env
+├── .gitignore
+├── package-lock.json
+├── package.json
+├── README.md
+└── tsconfig.json
 ```
 
 ---
