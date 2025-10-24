@@ -5,9 +5,9 @@
   "type": "module",
   "types": "node",
   "scripts": {
+    "build": "tsc --project tsconfig.json",
     "start": "node ./dist/bin/www.js",
     "dev": "nodemon --watch src --exec node --loader ts-node/esm ./src/bin/www.ts",
-    "build": "tsc --project tsconfig.json",
     "serve": "npm run build && node ./dist/bin/www.js",
     "lint": "tsc --noEmit",
     "clean": "rimraf dist"
