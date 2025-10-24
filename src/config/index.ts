@@ -1,1 +1,1 @@
-export { dbConfig } from './db.ts';
+export { dbConfig } from './db';

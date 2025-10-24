@@ -1,6 +1,6 @@
-import { dbConfig } from '../config/index.ts';
+import { dbConfig } from '../config/index';
 import bcrypt from 'bcrypt';
-import { users } from '../entities/users.ts';
+import { users } from '../entities/users';
 
 export const userService = {
   async getAll(): Promise<users[]> {
