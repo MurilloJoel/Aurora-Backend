@@ -1,20 +1,3 @@
-<<<<<<< HEAD
-import { dbConfig } from '../config/index.js';
-import bcrypt from 'bcrypt';
-import type { users } from '../entities/users.ts';
-
-export const userService = {
-  async getAll(): Promise<users[]> {
-    const pool = dbConfig.pgPool!;
-    const { rows } = await pool.query('SELECT * FROM usuarios ORDER BY id');
-    return rows;
-  },
-
-  async getById(id: number): Promise<users | null> {
-    const pool = dbConfig.pgPool!;
-    const { rows } = await pool.query('SELECT * FROM usuarios WHERE id = $1', [id]);
-    return rows[0] || null;
-=======
 import { dbConfig } from '../config/db.js';
 import bcrypt from 'bcrypt';
 import { users } from '../entities/users.js';
@@ -58,17 +41,12 @@ export const userService = {
       [id]
     );
     return rows[0] ? mapUserRow(rows[0]) : null;
->>>>>>> 8e29edab2c8228e2afafff6341d6248132c46a04
   },
 
   async create(user: { nombre: string; email: string; password: string; rolId: number }): Promise<users> {
     const pool = dbConfig.pgPool!;
     const password_hash = await bcrypt.hash(user.password, 10);
-<<<<<<< HEAD
-    const { rows } = await pool.query(
-=======
     const { rows } = await getPool().query(
->>>>>>> 8e29edab2c8228e2afafff6341d6248132c46a04
       `INSERT INTO usuarios (nombre, email, password_hash, rol_id, activo)
        VALUES ($1, $2, $3, $4, TRUE)
        RETURNING id, nombre, email, password_hash, rol_id, token_jwt, token_refresh, ultimo_login, creado_en, actualizado_en, activo`,
@@ -81,12 +59,8 @@ export const userService = {
     id: number,
     updates: Partial<{ nombre: string; email: string; password?: string; rolId: number; activo: boolean }>
   ): Promise<users | null> {
-<<<<<<< HEAD
-    const pool = dbConfig.pgPool!;
-=======
     if (Object.keys(updates).length === 0) return this.getById(id);
 
->>>>>>> 8e29edab2c8228e2afafff6341d6248132c46a04
     const fields: string[] = [];
     const values: any[] = [];
     let index = 1;
@@ -106,14 +80,9 @@ export const userService = {
 
     values.push(id);
 
-<<<<<<< HEAD
-    const { rows } = await pool.query(
-      `UPDATE usuarios SET ${fields.join(', ')}, actualizado_en = NOW() WHERE id = $${index} RETURNING *`,
-=======
     const { rows } = await getPool().query(
       `UPDATE usuarios SET ${fields.join(', ')}, actualizado_en = NOW() WHERE id = $${index} 
        RETURNING id, nombre, email, password_hash, rol_id, token_jwt, token_refresh, ultimo_login, creado_en, actualizado_en, activo`,
->>>>>>> 8e29edab2c8228e2afafff6341d6248132c46a04
       values
     );
 
@@ -121,11 +90,6 @@ export const userService = {
   },
 
   async delete(id: number): Promise<void> {
-<<<<<<< HEAD
-    const pool = dbConfig.pgPool!;
-    await pool.query('DELETE FROM usuarios WHERE id = $1', [id]);
-=======
     await getPool().query('DELETE FROM usuarios WHERE id = $1', [id]);
->>>>>>> 8e29edab2c8228e2afafff6341d6248132c46a04
   },
 };
