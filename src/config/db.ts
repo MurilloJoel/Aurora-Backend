@@ -51,11 +51,20 @@ if (isProduction) {
 let supabase: SupabaseClient | null = null;
 
 if (process.env.SUPABASE_URL && process.env.SUPABASE_KEY) {
+<<<<<<< HEAD
   supabase = createClient(
     process.env.SUPABASE_URL,
     process.env.SUPABASE_KEY
   );
   console.log("☁️ Cliente Supabase inicializado");
+=======
+  supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY, {
+    global: {
+      headers: {},
+    },
+  });
+  console.log("☁️ Cliente Supabase inicializado correctamente");
+>>>>>>> 8e29edab2c8228e2afafff6341d6248132c46a04
 }
 
 // ==============================
@@ -68,4 +77,8 @@ export const dbConfig = {
   supabase,
 };
 
+<<<<<<< HEAD
 export default dbConfig;
+=======
+export default dbConfig;
+>>>>>>> 8e29edab2c8228e2afafff6341d6248132c46a04

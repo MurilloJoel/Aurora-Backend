@@ -1,13 +1,21 @@
 import { Request, Response } from 'express';
+<<<<<<< HEAD
+=======
+import { dbConfig } from '../config';
+>>>>>>> 8e29edab2c8228e2afafff6341d6248132c46a04
 import { userService } from '../services/usersService.js';
 
 export const getUsers = async (req: Request, res: Response) => {
-  try {
-    const users = await userService.getAll();
-    res.status(200).json(users);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Error al obtener los usuarios' });
+  if (dbConfig.isProduction && dbConfig.pgPool) {
+    // Supabase (PostgreSQL)
+    const { rows } = await dbConfig.pgPool.query("SELECT * FROM users");
+    return rows;
+  } else if (dbConfig.mysqlPool) {
+    // Local (MySQL)
+    const [rows] = await dbConfig.mysqlPool.query("SELECT * FROM users");
+    return rows;
+  } else {
+    throw new Error("No hay conexión a la base de datos disponible");
   }
 };
 

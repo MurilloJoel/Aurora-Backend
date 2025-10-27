@@ -25,7 +25,10 @@
     "morgan": "^1.10.1",
     "mysql2": "^3.15.3",
     "pg": "^8.16.3",
-    "pug": "^3.0.3"
+    "postgres": "^3.4.7",
+    "pug": "^3.0.3",
+    "supabase": "^2.53.6",
+    "tsconfig-paths": "^4.2.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",

@@ -5,10 +5,15 @@ import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 
+<<<<<<< HEAD
 
 import indexRouter from './routes/index.js';
 import usersRouter from './routes/users.js';
 import chatsRouter from './routes/chats.js';
+=======
+import indexRouter from './routes/index.js';
+import usersRouter from './routes/users.js';
+>>>>>>> 8e29edab2c8228e2afafff6341d6248132c46a04
 
 const app = express();
 
