@@ -1,105 +1,162 @@
 import express from 'express';
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
+import bcrypt from 'bcryptjs';
+import dbConfig from '../config/db.js';
 
 const router = express.Router();
 
-// GET users → Obtener todos los usuarios
-router.get('/', async (req: Request, res: Response) => {
+// Detectar entorno y DB
+const isProd = dbConfig.isProduction;
+const supabase = dbConfig.supabase;
+const mysqlPool = dbConfig.mysqlPool;
+
+// ==============================
+// GET /users → Obtener todos los usuarios
+// ==============================
+router.get('/', async (_req: Request, res: Response) => {
   try {
-    // Aquí iría la llamada al servicio o modelo que obtiene todos los usuarios
-    res.status(200).json({ message: 'Lista de usuarios obtenida correctamente' });
-  } catch (error) {
-    res.status(500).json({ error: 'Error al obtener los usuarios' });
+    if (isProd && supabase) {
+      const { data, error } = await supabase.from('usuarios').select('*');
+      if (error) throw error;
+      return res.status(200).json({ message: 'Usuarios obtenidos correctamente', data });
+    } else if (!isProd && mysqlPool) {
+      const [rows] = await mysqlPool.query('SELECT * FROM usuarios');
+      return res.status(200).json({ message: 'Usuarios obtenidos correctamente', data: rows });
+    } else {
+      return res.status(500).json({ error: 'Base de datos no inicializada' });
+    }
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message });
   }
 });
 
-// GET users/:id → Obtener un usuario por ID
+// ==============================
+// GET /users/:id → Obtener un usuario por ID
+// ==============================
 router.get('/:id', async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
-    res.status(200).json({ message: `Usuario con ID ${id} obtenido correctamente` });
-  } catch (error) {
-    res.status(500).json({ error: 'Error al obtener el usuario' });
+    if (isProd && supabase) {
+      const { data, error } = await supabase.from('usuarios').select('*').eq('id', id).single();
+      if (error) throw error;
+      return res.status(200).json({ message: 'Usuario obtenido correctamente', data });
+    } else if (!isProd && mysqlPool) {
+      const [rows]: any = await mysqlPool.query('SELECT * FROM usuarios WHERE id = ?', [id]);
+      if (!rows.length) return res.status(404).json({ error: `Usuario con ID ${id} no encontrado` });
+      return res.status(200).json({ message: 'Usuario obtenido correctamente', data: rows[0] });
+    } else {
+      return res.status(500).json({ error: 'Base de datos no inicializada' });
+    }
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message });
   }
 });
 
-// POST users → Crear un nuevo usuario
+// ==============================
+// POST /users → Crear un nuevo usuario
+// ==============================
 router.post('/', async (req: Request, res: Response) => {
-  const { nombre, email, passwordHash, rolId } = req.body;
+  const { nombre, email, password, rolId } = req.body;
+
+  if (!nombre || !email || !password || rolId === undefined) {
+    return res.status(400).json({ error: 'Faltan campos obligatorios' });
+  }
+
   try {
-    // Aquí podrías generar la fecha de creación y estado activo por defecto
-    const nuevoUsuario = {
-      nombre,
-      email,
-      passwordHash,
-      rolId,
-      creadoEn: new Date(),
-      actualizadoEn: new Date(),
-      activo: true,
-    };
-    res.status(201).json({ message: 'Usuario creado correctamente', data: nuevoUsuario });
-  } catch (error) {
-    res.status(500).json({ error: 'Error al crear el usuario' });
+    // Generar hash de la contraseña
+    const passwordHash = await bcrypt.hash(password, 10);
+    const ahora = new Date();
+
+    if (isProd && supabase) {
+      const { data, error } = await supabase
+        .from('usuarios')
+        .insert([{
+          nombre,
+          email,
+          passwordHash,
+          rolId,
+          activo: true,
+          creadoEn: ahora.toISOString(),
+          actualizadoEn: ahora.toISOString()
+        }])
+        .select()
+        .single();
+
+      if (error) throw error;
+      return res.status(201).json({ message: 'Usuario creado correctamente', data });
+    } else if (!isProd && mysqlPool) {
+      const [result]: any = await mysqlPool.query(
+        'INSERT INTO usuarios (nombre,email,passwordHash,rolId,activo,creadoEn,actualizadoEn) VALUES (?,?,?,?,?,?,?)',
+        [nombre, email, passwordHash, rolId, true, ahora, ahora]
+      );
+
+      const [rows]: any = await mysqlPool.query('SELECT * FROM usuarios WHERE id = ?', [result.insertId]);
+      return res.status(201).json({ message: 'Usuario creado correctamente', data: rows[0] });
+    } else {
+      return res.status(500).json({ error: 'Base de datos no inicializada' });
+    }
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message });
   }
 });
 
-// PUT users/:id → Actualizar un usuario existente
+// ==============================
+// PUT /users/:id → Actualizar un usuario existente
+// ==============================
 router.put('/:id', async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { nombre, email, passwordHash, rolId, activo } = req.body;
+  const { nombre, email, rolId, activo } = req.body;
 
   try {
-    const usuarioActualizado = {
-      id,
-      nombre,
-      email,
-      passwordHash,
-      rolId,
-      actualizadoEn: new Date(),
-      activo,
-    };
-    res.status(200).json({ message: 'Usuario actualizado correctamente', data: usuarioActualizado });
-  } catch (error) {
-    res.status(500).json({ error: 'Error al actualizar el usuario' });
+    if (isProd && supabase) {
+      const { data, error } = await supabase
+        .from('usuarios')
+        .update({ nombre, email, rolId, activo, actualizadoEn: new Date().toISOString() })
+        .eq('id', id)
+        .select()
+        .single();
+      if (error) throw error;
+      return res.status(200).json({ message: 'Usuario actualizado correctamente', data });
+    } else if (!isProd && mysqlPool) {
+      await mysqlPool.query(
+        'UPDATE usuarios SET nombre=?, email=?, rolId=?, activo=?, actualizadoEn=? WHERE id=?',
+        [nombre, email, rolId, activo, new Date(), id]
+      );
+      const [rows]: any = await mysqlPool.query('SELECT * FROM usuarios WHERE id = ?', [id]);
+      return res.status(200).json({ message: 'Usuario actualizado correctamente', data: rows[0] });
+    } else {
+      return res.status(500).json({ error: 'Base de datos no inicializada' });
+    }
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message });
   }
 });
 
-// DELETE users/:id → Eliminar (o desactivar) un usuario
+// ==============================
+// DELETE /users/:id → Desactivar un usuario
+// ==============================
 router.delete('/:id', async (req: Request, res: Response) => {
   const { id } = req.params;
-  try {
-    res.status(200).json({ message: `Usuario con ID ${id} eliminado (o desactivado) correctamente` });
-  } catch (error) {
-    res.status(500).json({ error: 'Error al eliminar el usuario' });
-  }
-});
 
-// POST users/login → Iniciar sesión
-router.post('/login', async (req: Request, res: Response) => {
-  const { email, password } = req.body;
   try {
-    // Aquí iría la lógica de autenticación (verificar hash, generar JWT, etc.)
-    res.status(200).json({
-      message: 'Inicio de sesión exitoso',
-      tokenJwt: 'token_de_ejemplo',
-      tokenRefresh: 'refresh_de_ejemplo',
-    });
-  } catch (error) {
-    res.status(401).json({ error: 'Credenciales inválidas' });
-  }
-});
-
-// POST users/refresh → Refrescar token JWT
-router.post('/refresh', async (req: Request, res: Response) => {
-  const { tokenRefresh } = req.body;
-  try {
-    // Aquí se validaría el tokenRefresh y se emitiría un nuevo tokenJwt
-    res.status(200).json({
-      message: 'Token refrescado correctamente',
-      tokenJwt: 'nuevo_token_jwt',
-    });
-  } catch (error) {
-    res.status(401).json({ error: 'Token de refresco inválido' });
+    if (isProd && supabase) {
+      const { data, error } = await supabase
+        .from('usuarios')
+        .update({ activo: false, actualizadoEn: new Date().toISOString() })
+        .eq('id', id)
+        .select()
+        .single();
+      if (error) throw error;
+      return res.status(200).json({ message: 'Usuario desactivado correctamente', data });
+    } else if (!isProd && mysqlPool) {
+      await mysqlPool.query('UPDATE usuarios SET activo=?, actualizadoEn=? WHERE id=?', [false, new Date(), id]);
+      const [rows]: any = await mysqlPool.query('SELECT * FROM usuarios WHERE id = ?', [id]);
+      return res.status(200).json({ message: 'Usuario desactivado correctamente', data: rows[0] });
+    } else {
+      return res.status(500).json({ error: 'Base de datos no inicializada' });
+    }
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message });
   }
 });
 

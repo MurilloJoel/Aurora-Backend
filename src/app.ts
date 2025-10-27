@@ -5,8 +5,10 @@ import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 
-import indexRouter from './routes/index';
-import usersRouter from './routes/users';
+
+import indexRouter from './routes/index.js';
+import usersRouter from './routes/users.js';
+import chatsRouter from './routes/chats.js';
 
 const app = express();
 
@@ -24,6 +26,7 @@ app.use(express.static(path.join(process.cwd(), 'public')));
 // Routes
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/api/chats', chatsRouter);
 
 // Catch 404 and forward to error handler
 app.use((req: Request, res: Response, next: NextFunction) => {
