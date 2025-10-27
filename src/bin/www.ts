@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // Module dependencies
-import app from '../app'; // asegúrate de que app.ts exporte default
+import app from '../app.js'; // asegúrate de que app.ts exporte default
 import debugLib from 'debug';
 import http from 'http';
 
