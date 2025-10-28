@@ -4,6 +4,7 @@ import logger from 'morgan';
 import indexRouter from './routes/index.js';
 import usersRouter from './routes/users.js';
 import messagesRouter from './routes/messages.js';
+import productsRouter from './routes/products.js';
 import createError from 'http-errors';
 
 const app = express();
@@ -19,6 +20,8 @@ app.use(express.static('public'));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/messages', messagesRouter);
+app.use('/products', productsRouter);
+
 
 // Catch 404 and forward to error handler
 app.use((_req, _res, next) => {
