@@ -1,32 +1,49 @@
 import winston from "winston";
 import "winston-daily-rotate-file";
 
-const transport = new winston.transports.DailyRotateFile({
-  dirname: "logs",            // 📁 carpeta de logs
-  filename: "%DATE%.log",     // cada día crea un archivo
-  datePattern: "YYYY-MM-DD",
-  zippedArchive: true,
-  maxSize: "20m",
-  maxFiles: "14d",            // guarda 14 días
+const { combine, timestamp, printf, colorize } = winston.format;
+
+// 💅 Formato del log
+const logFormat = printf(({ level, message, timestamp }) => {
+  return `[${timestamp}] [${level.toUpperCase()}]: ${message}`;
 });
 
-const logger = winston.createLogger({
-  level: "info",
-  format: winston.format.combine(
-    winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
-    winston.format.printf(
-      (info) => `[${info.timestamp}] [${info.level.toUpperCase()}]: ${info.message}`
-    )
-  ),
-  transports: [
-    transport,
+// 🧩 Detectar entorno
+const isProduction = process.env.NODE_ENV === "production";
+
+// 🪵 Transportes
+const transports = [];
+
+if (isProduction) {
+  // 🌍 En Render: solo consola
+  transports.push(
     new winston.transports.Console({
-      format: winston.format.combine(
-        winston.format.colorize(),
-        winston.format.simple()
-      ),
+      level: "info",
+      format: combine(colorize(), timestamp({ format: "YYYY-MM-DD HH:mm:ss" }), logFormat),
+    })
+  );
+} else {
+  // 💻 En desarrollo: consola + archivos
+  transports.push(
+    new winston.transports.Console({
+      level: "debug",
+      format: combine(colorize(), timestamp({ format: "YYYY-MM-DD HH:mm:ss" }), logFormat),
     }),
-  ],
+    new winston.transports.DailyRotateFile({
+      dirname: "logs",
+      filename: "app-%DATE%.log",
+      datePattern: "YYYY-MM-DD",
+      zippedArchive: false,
+      maxSize: "20m",
+      maxFiles: "7d",
+    })
+  );
+}
+
+const logger = winston.createLogger({
+  level: isProduction ? "info" : "debug",
+  format: combine(timestamp({ format: "YYYY-MM-DD HH:mm:ss" }), logFormat),
+  transports,
 });
 
 export default logger;
