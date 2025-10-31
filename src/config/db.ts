@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import { Pool } from "pg";
 import mysql from "mysql2/promise";
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import logger from "../util/logger.js";
 
 dotenv.config();
 
@@ -23,7 +24,7 @@ if (!isProduction) {
     connectionLimit: 10,
     queueLimit: 0,
   });
-  console.log("✅ Conectado a la base de datos MySQL local");
+  logger.info("✅ Conectado a la base de datos MySQL local");
 }
 
 // ==============================
@@ -42,7 +43,7 @@ if (isProduction) {
     connectionString: process.env.PRODUCTION_DATABASE_URL,
     ssl: { rejectUnauthorized: false },
   });
-  console.log("✅ Conectado a la base de datos PostgreSQL (Supabase)");
+  logger.info("✅ Conectado a la base de datos PostgreSQL (Supabase)");
 }
 
 // ==============================
@@ -56,7 +57,7 @@ if (process.env.SUPABASE_URL && process.env.SUPABASE_KEY) {
       headers: {},
     },
   });
-  console.log("☁️ Cliente Supabase inicializado correctamente");
+  logger.info("☁️ Cliente Supabase inicializado correctamente");
 }
 
 // ==============================

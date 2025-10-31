@@ -1,7 +1,9 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
-import logger from 'morgan';
+import morgan from 'morgan';
 import createError from 'http-errors';
+
+import logger from './util/logger.js'; // 🧠 usa tu logger personalizado
 
 import indexRouter from './routes/index.js';
 import usersRouter from './routes/usersRouter.js';
@@ -14,7 +16,16 @@ const app = express();
 // =============================
 // 🧩 Middlewares globales
 // =============================
-app.use(logger('dev'));
+
+// Redirigir los logs HTTP de Morgan a Winston
+app.use(
+  morgan(':method :url :status :response-time ms', {
+    stream: {
+      write: (message) => logger.http(message.trim()),
+    },
+  })
+);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -35,15 +46,20 @@ app.use('/', authRouter);
 
 // 404 - Ruta no encontrada
 app.use((_req, _res, next) => {
-  next(createError(404, 'Ruta no encontrada'));
+  const error = createError(404, 'Ruta no encontrada');
+  logger.warn(`404 - ${error.message}`);
+  next(error);
 });
 
 // Middleware general de errores (siempre devuelve JSON)
-app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-  res.status(err.status || 500).json({
-    status: 'error',
-    message: err.message || 'Error interno del servidor',
-  });
-});
+app.use(
+  (err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+    logger.error(`❌ ${err.status || 500} - ${err.message}`);
+    res.status(err.status || 500).json({
+      status: 'error',
+      message: err.message || 'Error interno del servidor',
+    });
+  }
+);
 
 export default app;

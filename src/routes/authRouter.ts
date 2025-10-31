@@ -3,6 +3,7 @@ import type { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import { dbConfig } from '../config/db.js';
 import { jwtUtils } from '../util/jwt.js';
+import logger from '../util/logger.js';
 
 const router = express.Router();
 
@@ -46,7 +47,7 @@ router.post('/login', async (req: Request, res: Response) => {
 
     return res.status(200).json({ message: 'Inicio de sesión exitoso', accessToken, refreshToken });
   } catch (err: any) {
-    console.error(err);
+    logger.warn(err);
     return res.status(500).json({ error: 'Error en el servidor', details: err.message });
   }
 });
@@ -105,6 +106,7 @@ router.post('/logout', async (req: Request, res: Response) => {
 // 👤 GET /profile → Ruta protegida con JWT
 // ==============================
 import { requireAuth } from '../util/jwt.js';
+
 
 router.get('/profile', requireAuth, async (req: Request, res: Response) => {
   try {
