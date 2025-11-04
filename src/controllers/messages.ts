@@ -12,6 +12,20 @@ export const getMessages = async (_req: Request, res: Response) => {
   }
 };
 
+export const getMessagesByChatId = async (req: Request, res: Response) => {
+  try {
+    const chatId = Number(req.params.chatId);
+    const msgs = await messagesService.getByChatId(chatId);
+    if (!msgs || msgs.length === 0) {
+      return res.status(404).json({ error: 'Chat no encontrado o sin mensajes' });
+    }
+    res.status(200).json({ message: 'Mensajes obtenidos correctamente', data: msgs });
+  } catch (error: any) {
+    logger.warn(error);
+    res.status(500).json({ error: 'Error al obtener los mensajes del chat' });
+  }
+};
+
 export const getMessageById = async (req: Request, res: Response) => {
   try {
     const msg = await messagesService.getById(Number(req.params.id));
