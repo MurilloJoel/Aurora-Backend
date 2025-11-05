@@ -4,4 +4,4 @@ dist
 logs
 /src/generated/prisma
 migration.sql
-src\controllers\prismaClient.ts
+prismaClient.ts
