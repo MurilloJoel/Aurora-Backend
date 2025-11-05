@@ -18,5 +18,5 @@
     "noEmit": false
   },
   "include": ["src", "src/tests/**/*.ts"],
-  "exclude": ["node_modules", "dist"]
+  "exclude": ["node_modules","src/generated/prisma", "dist"]
 }
