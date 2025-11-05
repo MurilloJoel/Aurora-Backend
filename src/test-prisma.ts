@@ -1,4 +1,4 @@
-import prisma from './controllers/prismaClient.js';
+import prisma from './controllers/prismaClient';
 
 async function main() {
   try {
