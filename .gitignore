@@ -5,3 +5,5 @@ logs
 /src/generated/prisma
 migration.sql
 prismaClient.ts
+test-prisma.ts
+prisma.config.ts
