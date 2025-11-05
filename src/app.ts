@@ -3,7 +3,7 @@ import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import createError from 'http-errors';
 
-import logger from './util/logger.js'; // 🧠 usa tu logger personalizado
+import logger from './util/logger.js';
 
 import indexRouter from './routes/index.js';
 import usersRouter from './routes/usersRouter.js';
