@@ -10,6 +10,7 @@ import usersRouter from './routes/usersRouter.js';
 import messagesRouter from './routes/messages.js';
 import productsRouter from './routes/products.js';
 import authRouter from './routes/authRouter.js';
+import chatsRoutes from './routes/chatsRoutes.js';
 
 const app = express();
 
@@ -39,6 +40,7 @@ app.use('/users', usersRouter);
 app.use('/messages', messagesRouter);
 app.use('/products', productsRouter);
 app.use('/', authRouter);
+app.use('/chats', chatsRoutes);
 
 // =============================
 // ⚠️ Manejo de errores
