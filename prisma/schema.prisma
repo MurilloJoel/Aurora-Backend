@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider     = "postgresql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+model chats {
+  id             Int      @id @default(autoincrement())
+  usuario_id     Int
+  titulo         String
+  creado_en      DateTime @default(now())
+  actualizado_en DateTime
+}
+
+model invalid_tokens {
+  id            Int       @id @default(autoincrement())
+  token         String
+  tipo          TokenTipo
+  invalidado_en DateTime
+}
+
+model messages {
+  id        Int           @id @default(autoincrement())
+  chat_id   Int
+  remitente RemitenteTipo
+  contenido String
+  creado_en DateTime      @default(now())
+}
+
+model products {
+  id             Int      @id @default(autoincrement())
+  nombre         String
+  descripcion    String?
+  precio         Float
+  stock          Int
+  activo         Boolean
+  creado_en      DateTime @default(now())
+  actualizado_en DateTime
+}
+
+model users {
+  id             Int       @id @default(autoincrement())
+  nombre         String
+  email          String    @unique
+  password_hash  String
+  rol_id         Int
+  token_jwt      String?
+  token_refresh  String?
+  ultimo_login   DateTime?
+  creado_en      DateTime  @default(now())
+  actualizado_en DateTime
+  activo         Boolean
+}
+
+enum RemitenteTipo {
+  usuario
+  ia
+}
+
+enum TokenTipo {
+  access
+  refresh
+}
+
+enum remitente_enum {
+  usuario
+  ia
+}
+
+enum tipo_token_enum {
+  access
+  refresh
+}
