@@ -1,5 +1,5 @@
 import { dbConfig } from '../config/index.js';
-import type { Chat } from '../entities/chats.ts';
+import type { Chat } from '../entities/chatsEntity.js';
 
 export const chatService = {
   async getAll(): Promise<Chat[]> {

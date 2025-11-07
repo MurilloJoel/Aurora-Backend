@@ -1,5 +1,5 @@
 import { dbConfig } from '../config/db.js';
-import type { messages } from '../entities/messages.js';
+import type { messages } from '../entities/messagesEntity.js';
 
 export const messagesService = {
   async getAll(): Promise<messages[]> {

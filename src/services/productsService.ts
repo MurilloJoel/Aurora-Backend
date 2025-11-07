@@ -1,5 +1,5 @@
 import { dbConfig } from '../config/db.js';
-import type { products } from '../entities/products.js';
+import type { products } from '../entities/productsEntity.js';
 
 export const productsService = {
   async getAll(): Promise<products[]> {

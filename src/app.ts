@@ -5,12 +5,12 @@ import createError from 'http-errors';
 
 import logger from './util/logger.js';
 
-import indexRouter from './routes/index.js';
+import indexRouter from './routes/indexRouter.js';
 import usersRouter from './routes/usersRouter.js';
-import messagesRouter from './routes/messages.js';
-import productsRouter from './routes/products.js';
+import messagesRouter from './routes/messagesRouter.js';
+import productsRouter from './routes/productsRouter.js';
 import authRouter from './routes/authRouter.js';
-import chatsRoutes from './routes/chatsRoutes.js';
+import chatsRoutes from './routes/chatsRouter.js';
 
 const app = express();
 

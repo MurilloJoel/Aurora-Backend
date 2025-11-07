@@ -1,6 +1,6 @@
 import { dbConfig } from '../config/db.js';
 import bcrypt from 'bcrypt';
-import { users } from '../entities/users.js';
+import { users } from '../entities/usersEntity.js';
 
 // Helper para obtener el pool de manera segura
 function getPool() {
