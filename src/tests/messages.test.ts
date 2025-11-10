@@ -47,18 +47,18 @@ beforeAll(async () => {
 
   // Insertar mensajes de prueba
   await db.query(
-    "INSERT INTO mensajes (chat_id, remitente, contenido) VALUES (?, ?, ?)",
+    "INSERT INTO messages (chat_id, remitente, contenido) VALUES (?, ?, ?)",
     [chatId, "usuario", "Mensaje de usuario de prueba"]
   );
   await db.query(
-    "INSERT INTO mensajes (chat_id, remitente, contenido) VALUES (?, ?, ?)",
+    "INSERT INTO messages (chat_id, remitente, contenido) VALUES (?, ?, ?)",
     [chatId, "ia", "Mensaje de IA de prueba"]
   );
 });
 
 afterAll(async () => {
   // Limpiar mensajes
-  await db.query("DELETE FROM mensajes WHERE chat_id = ?", [chatId]);
+  await db.query("DELETE FROM messages WHERE chat_id = ?", [chatId]);
   // Limpiar chat
   await db.query("DELETE FROM chats WHERE id = ?", [chatId]);
   // Limpiar usuario

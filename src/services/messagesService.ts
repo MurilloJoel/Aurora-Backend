@@ -11,7 +11,7 @@ export const messagesService = {
   async getByChatId(chatId: number): Promise<messages[]> {
     if (!dbConfig.mysqlPool) throw new Error('Base de datos no inicializada');
     const [rows]: any = await dbConfig.mysqlPool.query(
-      'SELECT * FROM mensajes WHERE chat_id = ? ORDER BY id',
+      'SELECT * FROM messages WHERE chat_id = ? ORDER BY id',
       [chatId]
     );
     return rows; // Nota: en el controlador ahora chequeamos si está vacío
