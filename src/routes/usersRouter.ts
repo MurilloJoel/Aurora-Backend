@@ -38,12 +38,12 @@ router.get('/:id', requireAuth, async (req: Request, res: Response) => {
 
   try {
     if (isProd && supabase) {
-      const { data, error } = await supabase.from('usuarios').select('*').eq('id', id).single();
+      const { data, error } = await supabase.from('users').select('*').eq('id', id).single();
       if (error) throw error;
       if (!data) return res.status(404).json({ error: 'Usuario no encontrado' });
       return res.status(200).json({ message: 'Usuario obtenido correctamente', data });
     } else if (!isProd && mysqlPool) {
-      const [rows]: any = await mysqlPool.query('SELECT * FROM usuarios WHERE id = ?', [id]);
+      const [rows]: any = await mysqlPool.query('SELECT * FROM users WHERE id = ?', [id]);
       if (!rows.length) return res.status(404).json({ error: 'Usuario no encontrado' });
       return res.status(200).json({ message: 'Usuario obtenido correctamente', data: rows[0] });
     } else {
@@ -70,7 +70,7 @@ router.post('/', async (req: Request, res: Response) => {
     let newUser: any;
 
     if (isProd && supabase) {
-      const { data, error } = await supabase.from('usuarios').insert([
+      const { data, error } = await supabase.from('users').insert([
         {
           nombre,
           email,
@@ -86,10 +86,10 @@ router.post('/', async (req: Request, res: Response) => {
       newUser = data;
     } else if (!isProd && mysqlPool) {
       const [result]: any = await mysqlPool.query(
-        'INSERT INTO usuarios (nombre, email, password_hash, rol_id, activo, creado_en, actualizado_en) VALUES (?, ?, ?, ?, ?, ?, ?)',
+        'INSERT INTO users (nombre, email, password_hash, rol_id, activo, creado_en, actualizado_en) VALUES (?, ?, ?, ?, ?, ?, ?)',
         [nombre, email, password_hash, rolId, true, ahora, ahora]
       );
-      const [rows]: any = await mysqlPool.query('SELECT * FROM usuarios WHERE id = ?', [result.insertId]);
+      const [rows]: any = await mysqlPool.query('SELECT * FROM users WHERE id = ?', [result.insertId]);
       newUser = rows[0];
     }
 
@@ -112,7 +112,7 @@ router.put('/:id', requireAuth, async (req: Request, res: Response) => {
     let updatedUser: any;
 
     if (isProd && supabase) {
-      const { data, error } = await supabase.from('usuarios').update({
+      const { data, error } = await supabase.from('users').update({
         ...(nombre && { nombre }),
         ...(email && { email }),
         ...(rolId !== undefined && { rol_id: rolId }),
@@ -123,12 +123,12 @@ router.put('/:id', requireAuth, async (req: Request, res: Response) => {
       if (error) throw error;
       updatedUser = data;
     } else if (!isProd && mysqlPool) {
-      const [rows]: any = await mysqlPool.query('SELECT * FROM usuarios WHERE id = ?', [id]);
+      const [rows]: any = await mysqlPool.query('SELECT * FROM users WHERE id = ?', [id]);
       if (!rows.length) return res.status(404).json({ error: 'Usuario no encontrado' });
 
       const current = rows[0];
       await mysqlPool.query(
-        'UPDATE usuarios SET nombre = ?, email = ?, rol_id = ?, activo = ?, actualizado_en = ? WHERE id = ?',
+        'UPDATE users SET nombre = ?, email = ?, rol_id = ?, activo = ?, actualizado_en = ? WHERE id = ?',
         [
           nombre || current.nombre,
           email || current.email,
@@ -139,7 +139,7 @@ router.put('/:id', requireAuth, async (req: Request, res: Response) => {
         ]
       );
 
-      const [updated]: any = await mysqlPool.query('SELECT * FROM usuarios WHERE id = ?', [id]);
+      const [updated]: any = await mysqlPool.query('SELECT * FROM users WHERE id = ?', [id]);
       updatedUser = updated[0];
     }
 
@@ -157,10 +157,10 @@ router.delete('/:id', requireAuth, async (req: Request, res: Response) => {
 
   try {
     if (isProd && supabase) {
-      const { error } = await supabase.from('usuarios').delete().eq('id', id);
+      const { error } = await supabase.from('users').delete().eq('id', id);
       if (error) throw error;
     } else if (!isProd && mysqlPool) {
-      await mysqlPool.query('DELETE FROM usuarios WHERE id = ?', [id]);
+      await mysqlPool.query('DELETE FROM users WHERE id = ?', [id]);
     } else {
       return res.status(500).json({ error: 'Base de datos no inicializada' });
     }
