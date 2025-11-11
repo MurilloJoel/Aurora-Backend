@@ -23,11 +23,11 @@ router.post('/login', async (req: Request, res: Response) => {
     let user: any = null;
 
     if (isProd && supabase) {
-      const { data, error } = await supabase.from('usuarios').select('*').eq('email', email).single();
+      const { data, error } = await supabase.from('users').select('*').eq('email', email).single();
       if (error || !data) return res.status(404).json({ error: 'Usuario no encontrado' });
       user = data;
     } else if (!isProd && mysqlPool) {
-      const [rows]: any = await mysqlPool.query('SELECT * FROM usuarios WHERE email = ?', [email]);
+      const [rows]: any = await mysqlPool.query('SELECT * FROM users WHERE email = ?', [email]);
       if (!rows.length) return res.status(404).json({ error: 'Usuario no encontrado' });
       user = rows[0];
     }
