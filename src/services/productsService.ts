@@ -4,13 +4,13 @@ import type { products } from '../entities/productsEntity.js';
 export const productsService = {
   async getAll(): Promise<products[]> {
     if (!dbConfig.mysqlPool) throw new Error('Base de datos no inicializada');
-    const [rows]: any = await dbConfig.mysqlPool.query('SELECT * FROM productos ORDER BY id');
+    const [rows]: any = await dbConfig.mysqlPool.query('SELECT * FROM products ORDER BY id');
     return rows;
   },
 
   async getById(id: number): Promise<products | null> {
     if (!dbConfig.mysqlPool) throw new Error('Base de datos no inicializada');
-    const [rows]: any = await dbConfig.mysqlPool.query('SELECT * FROM productos WHERE id = ?', [id]);
+    const [rows]: any = await dbConfig.mysqlPool.query('SELECT * FROM products WHERE id = ?', [id]);
     return rows[0] || null;
   },
 
@@ -21,7 +21,7 @@ export const productsService = {
       [data.nombre, data.descripcion || null, data.precio, data.stock, data.activo]
     );
 
-    const [rows]: any = await dbConfig.mysqlPool.query('SELECT * FROM productos WHERE id = ?', [result.insertId]);
+    const [rows]: any = await dbConfig.mysqlPool.query('SELECT * FROM products WHERE id = ?', [result.insertId]);
     return rows[0];
   },
 
@@ -37,12 +37,12 @@ export const productsService = {
     values.push(id);
 
     await dbConfig.mysqlPool.query(`UPDATE productos SET ${fields.join(', ')} WHERE id = ?`, values);
-    const [rows]: any = await dbConfig.mysqlPool.query('SELECT * FROM productos WHERE id = ?', [id]);
+    const [rows]: any = await dbConfig.mysqlPool.query('SELECT * FROM products WHERE id = ?', [id]);
     return rows[0] || null;
   },
 
   async delete(id: number): Promise<void> {
     if (!dbConfig.mysqlPool) throw new Error('Base de datos no inicializada');
-    await dbConfig.mysqlPool.query('DELETE FROM productos WHERE id = ?', [id]);
+    await dbConfig.mysqlPool.query('DELETE FROM products WHERE id = ?', [id]);
   },
 };
