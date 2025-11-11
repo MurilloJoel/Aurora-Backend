@@ -17,7 +17,7 @@ export const productsService = {
   async create(data: Omit<products, 'id' | 'creadoEn' | 'actualizadoEn'>): Promise<products> {
     if (!dbConfig.mysqlPool) throw new Error('Base de datos no inicializada');
     const [result]: any = await dbConfig.mysqlPool.query(
-      'INSERT INTO productos (nombre, descripcion, precio, stock, activo) VALUES (?, ?, ?, ?, ?)',
+      'INSERT INTO s (nombre, descripcion, precio, stock, activo) VALUES (?, ?, ?, ?, ?)',
       [data.nombre, data.descripcion || null, data.precio, data.stock, data.activo]
     );
 
@@ -36,7 +36,7 @@ export const productsService = {
     }
     values.push(id);
 
-    await dbConfig.mysqlPool.query(`UPDATE productos SET ${fields.join(', ')} WHERE id = ?`, values);
+    await dbConfig.mysqlPool.query(`UPDATE products SET ${fields.join(', ')} WHERE id = ?`, values);
     const [rows]: any = await dbConfig.mysqlPool.query('SELECT * FROM products WHERE id = ?', [id]);
     return rows[0] || null;
   },
