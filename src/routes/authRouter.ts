@@ -40,9 +40,9 @@ router.post('/login', async (req: Request, res: Response) => {
 
     // Guardar refresh token en la base de datos
     if (isProd && supabase) {
-      await supabase.from('usuarios').update({ token_refresh: refreshToken }).eq('id', user.id);
+      await supabase.from('users').update({ token_refresh: refreshToken }).eq('id', user.id);
     } else if (!isProd && mysqlPool) {
-      await mysqlPool.query('UPDATE usuarios SET token_refresh = ? WHERE id = ?', [refreshToken, user.id]);
+      await mysqlPool.query('UPDATE users SET token_refresh = ? WHERE id = ?', [refreshToken, user.id]);
     }
 
     return res.status(200).json({ message: 'Inicio de sesión exitoso', accessToken, refreshToken });
@@ -63,11 +63,11 @@ router.post('/refresh', async (req: Request, res: Response) => {
     let user: any = null;
 
     if (isProd && supabase) {
-      const { data, error } = await supabase.from('usuarios').select('*').eq('token_refresh', refreshToken).single();
+      const { data, error } = await supabase.from('users').select('*').eq('token_refresh', refreshToken).single();
       if (error || !data) return res.status(403).json({ error: 'Token no válido' });
       user = data;
     } else if (!isProd && mysqlPool) {
-      const [rows]: any = await mysqlPool.query('SELECT * FROM usuarios WHERE token_refresh = ?', [refreshToken]);
+      const [rows]: any = await mysqlPool.query('SELECT * FROM users WHERE token_refresh = ?', [refreshToken]);
       if (!rows.length) return res.status(403).json({ error: 'Token no válido' });
       user = rows[0];
     }
@@ -91,9 +91,9 @@ router.post('/logout', async (req: Request, res: Response) => {
 
   try {
     if (isProd && supabase) {
-      await supabase.from('usuarios').update({ token_refresh: null }).eq('token_refresh', refreshToken);
+      await supabase.from('users').update({ token_refresh: null }).eq('token_refresh', refreshToken);
     } else if (!isProd && mysqlPool) {
-      await mysqlPool.query('UPDATE usuarios SET token_refresh = NULL WHERE token_refresh = ?', [refreshToken]);
+      await mysqlPool.query('UPDATE users SET token_refresh = NULL WHERE token_refresh = ?', [refreshToken]);
     }
 
     return res.status(200).json({ message: 'Sesión cerrada correctamente' });
