@@ -13,6 +13,9 @@ import authRouter from './routes/authRouter.js';
 import chatsRoutes from './routes/chatsRouter.js';
 import paypalRouter from "./routes/paypalRouter.js";
 
+import { corsMiddleware } from './middlewares/cors.js';
+
+
 const app = express();
 
 // =============================
@@ -27,12 +30,16 @@ app.use(
     },
   })
 );
+app.use(corsMiddleware);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static('public'));
 app.use("/api/payments", paypalRouter);
+
+
+
 
 // =============================
 // 🌐 Rutas principales
