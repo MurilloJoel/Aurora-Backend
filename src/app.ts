@@ -11,6 +11,7 @@ import messagesRouter from './routes/messagesRouter.js';
 import productsRouter from './routes/productsRouter.js';
 import authRouter from './routes/authRouter.js';
 import chatsRoutes from './routes/chatsRouter.js';
+import paypalRouter from "./routes/paypalRouter.js";
 
 import { corsMiddleware } from './middlewares/cors.js';
 
@@ -35,6 +36,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static('public'));
+app.use("/api/payments", paypalRouter);
 
 
 
