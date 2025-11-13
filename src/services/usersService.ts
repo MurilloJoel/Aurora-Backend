@@ -1,4 +1,4 @@
-import { ERROR_CODES } from "../utils/codes";
+import { ERROR_CODES } from "../utils/codes.js";
 import { dbConfig } from '../config/db.js';
 import bcrypt from 'bcrypt';
 import { users } from '../entities/usersEntity.js';

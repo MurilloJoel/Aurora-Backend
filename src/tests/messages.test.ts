@@ -1,4 +1,4 @@
-import { ERROR_CODES } from "../utils/codes";
+import { ERROR_CODES } from "../utils/codes.js";
 import { beforeAll, afterAll, describe, it, expect } from "vitest";
 import request from "supertest";
 import jwt from "jsonwebtoken";

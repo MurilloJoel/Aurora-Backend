@@ -1,4 +1,4 @@
-import { ERROR_CODES } from "../utils/codes";
+import { ERROR_CODES } from "../utils/codes.js";
 import dotenv from "dotenv";
 import { Pool } from "pg";
 import mysql from "mysql2/promise";
