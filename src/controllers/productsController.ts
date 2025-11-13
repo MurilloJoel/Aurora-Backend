@@ -1,3 +1,4 @@
+import { ERROR_CODES } from "../utils/codes";
 import { Request, Response } from 'express';
 import { productsService } from '../services/productsService.js';
 import logger from '../utils/logger.js';
@@ -8,7 +9,7 @@ export const getProducts = async (_req: Request, res: Response) => {
     res.status(200).json({ message: 'Productos obtenidos correctamente', data: products });
   } catch (error: any) {
     logger.warn(error);
-    res.status(500).json({ error: 'Error al obtener los productos' });
+    throw new Error(ERROR_CODES.PRODUCTS[610]);
   }
 };
 
@@ -19,7 +20,7 @@ export const getProductById = async (req: Request, res: Response) => {
     res.status(200).json({ message: 'Producto obtenido correctamente', data: product });
   } catch (error: any) {
     logger.warn(error);
-    res.status(500).json({ error: 'Error al obtener el producto' });
+    throw new Error(ERROR_CODES.PRODUCTS[610]);
   }
 };
 
@@ -27,14 +28,14 @@ export const createProduct = async (req: Request, res: Response) => {
   try {
     const { nombre, descripcion, precio, stock, activo = true } = req.body;
     if (!nombre || precio == null || stock == null) {
-      return res.status(400).json({ error: 'Faltan campos obligatorios' });
+      throw new Error(ERROR_CODES.SYSTEM[732])
     }
 
     const newProduct = await productsService.create({ nombre, descripcion, precio, stock, activo });
     res.status(201).json({ message: 'Producto creado correctamente', data: newProduct });
   } catch (error: any) {
     logger.warn(error);
-    res.status(500).json({ error: 'Error al crear el producto' });
+    throw new Error(ERROR_CODES.PRODUCTS[603]);
   }
 };
 
@@ -46,7 +47,7 @@ export const updateProduct = async (req: Request, res: Response) => {
     res.status(200).json({ message: 'Producto actualizado correctamente', data: updatedProduct });
   } catch (error: any) {
     logger.warn(error);
-    res.status(500).json({ error: 'Error al actualizar el producto' });
+    throw new Error(ERROR_CODES.PRODUCTS[604]);
   }
 };
 
@@ -57,6 +58,6 @@ export const deleteProduct = async (req: Request, res: Response) => {
     res.status(200).json({ message: 'Producto eliminado correctamente' });
   } catch (error: any) {
     logger.warn(error);
-    res.status(500).json({ error: 'Error al eliminar el producto' });
+    throw new Error(ERROR_CODES.PRODUCTS[605]);
   }
 };

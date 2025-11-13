@@ -1,3 +1,4 @@
+import { ERROR_CODES } from "../utils/codes";
 import { dbConfig } from '../config/index.js';
 import type { Chat } from '../entities/chatsEntity.js';
 

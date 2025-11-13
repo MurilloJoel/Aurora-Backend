@@ -1,3 +1,4 @@
+import { ERROR_CODES } from "../utils/codes";
 import { Request, Response } from 'express';
 import { userService } from '../services/usersService';
 import logger from '../utils/logger.js';
@@ -8,18 +9,18 @@ export const getUsers = async (req: Request, res: Response) => {
     res.status(200).json(users);
   } catch (error) {
     logger.warn(error);
-    res.status(500).json({ error: 'Error al obtener los usuarios' });
+    throw new Error(ERROR_CODES.USERS[630]);
   }
 };
 
 export const getUserById = async (req: Request, res: Response) => {
   try {
     const user = await userService.getById(Number(req.params.id));
-    if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
+    if (!user) throw new Error(ERROR_CODES.USERS[620]);
     res.status(200).json(user);
   } catch (error) {
     logger.warn(error);
-    res.status(500).json({ error: 'Error al obtener el usuario' });
+    throw new Error(ERROR_CODES.USERS[630]);
   }
 };
 
@@ -30,6 +31,6 @@ export const createUser = async (req: Request, res: Response) => {
     res.status(201).json({ message: 'Usuario creado correctamente', data: newUser });
   } catch (error) {
     logger.warn(error);
-    res.status(500).json({ error: 'Error al crear el usuario' });
+    throw new Error(ERROR_CODES.USERS[625]);
   }
 };

@@ -1,10 +1,11 @@
+import { ERROR_CODES } from "../utils/codes";
 import { dbConfig } from '../config/db.js';
 import bcrypt from 'bcrypt';
 import { users } from '../entities/usersEntity.js';
 
 // Helper para obtener el pool de manera segura
 function getPool() {
-  if (!dbConfig.pgPool) throw new Error('Postgres pool no inicializado');
+  if (!dbConfig.pgPool) throw new Error(ERROR_CODES.SYSTEM[733])
   return dbConfig.pgPool;
 }
 

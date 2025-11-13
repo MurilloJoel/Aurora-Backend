@@ -1,3 +1,4 @@
+import { ERROR_CODES } from "../utils/codes";
 import express from 'express';
 import type { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
@@ -23,10 +24,10 @@ router.get('/', requireAuth, async (_req: Request, res: Response) => {
       const [rows] = await mysqlPool.query('SELECT * FROM usuarios');
       return res.status(200).json({ message: 'Usuarios obtenidos correctamente', data: rows });
     } else {
-      return res.status(500).json({ error: 'Base de datos no inicializada' });
+      throw new Error(ERROR_CODES.SYSTEM[730])
     }
   } catch (err: any) {
-    return res.status(500).json({ error: err.message });
+    throw new Error(ERROR_CODES.SYSTEM[729])
   }
 });
 
@@ -40,17 +41,17 @@ router.get('/:id', requireAuth, async (req: Request, res: Response) => {
     if (isProd && supabase) {
       const { data, error } = await supabase.from('users').select('*').eq('id', id).single();
       if (error) throw error;
-      if (!data) return res.status(404).json({ error: 'Usuario no encontrado' });
+      if (!data) throw new Error(ERROR_CODES.USERS[620])
       return res.status(200).json({ message: 'Usuario obtenido correctamente', data });
     } else if (!isProd && mysqlPool) {
       const [rows]: any = await mysqlPool.query('SELECT * FROM users WHERE id = ?', [id]);
-      if (!rows.length) return res.status(404).json({ error: 'Usuario no encontrado' });
+      if (!rows.length) throw new Error(ERROR_CODES.USERS[620])
       return res.status(200).json({ message: 'Usuario obtenido correctamente', data: rows[0] });
     } else {
-      return res.status(500).json({ error: 'Base de datos no inicializada' });
+      throw new Error(ERROR_CODES.SYSTEM[730])
     }
   } catch (err: any) {
-    return res.status(500).json({ error: err.message });
+    throw new Error(ERROR_CODES.SYSTEM[729])
   }
 });
 
@@ -61,7 +62,7 @@ router.post('/', async (req: Request, res: Response) => {
   const { nombre, email, password, rolId } = req.body;
 
   if (!nombre || !email || !password || rolId === undefined)
-    return res.status(400).json({ error: 'Faltan campos obligatorios' });
+    throw new Error(ERROR_CODES.SYSTEM[732])
 
   try {
     const password_hash = await bcrypt.hash(password, 10);
@@ -95,7 +96,7 @@ router.post('/', async (req: Request, res: Response) => {
 
     return res.status(201).json({ message: 'Usuario creado correctamente', data: newUser });
   } catch (err: any) {
-    return res.status(500).json({ error: err.message });
+    throw new Error(ERROR_CODES.SYSTEM[729])
   }
 });
 
@@ -124,7 +125,7 @@ router.put('/:id', requireAuth, async (req: Request, res: Response) => {
       updatedUser = data;
     } else if (!isProd && mysqlPool) {
       const [rows]: any = await mysqlPool.query('SELECT * FROM users WHERE id = ?', [id]);
-      if (!rows.length) return res.status(404).json({ error: 'Usuario no encontrado' });
+      if (!rows.length) throw new Error(ERROR_CODES.USERS[620])
 
       const current = rows[0];
       await mysqlPool.query(
@@ -145,7 +146,7 @@ router.put('/:id', requireAuth, async (req: Request, res: Response) => {
 
     return res.status(200).json({ message: 'Usuario actualizado correctamente', data: updatedUser });
   } catch (err: any) {
-    return res.status(500).json({ error: err.message });
+    throw new Error(ERROR_CODES.USERS[626])
   }
 });
 
@@ -167,7 +168,7 @@ router.delete('/:id', requireAuth, async (req: Request, res: Response) => {
 
     return res.status(200).json({ message: 'Usuario eliminado correctamente' });
   } catch (err: any) {
-    return res.status(500).json({ error: err.message });
+    throw new Error(ERROR_CODES.USERS[626])
   }
 });
 

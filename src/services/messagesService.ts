@@ -1,15 +1,16 @@
+import { ERROR_CODES } from "../utils/codes";
 import { dbConfig } from '../config/db.js';
 import type { messages } from '../entities/messagesEntity.js';
 
 export const messagesService = {
   async getAll(): Promise<messages[]> {
-    if (!dbConfig.mysqlPool) throw new Error('Base de datos no inicializada');
+    if (!dbConfig.mysqlPool) throw new Error(ERROR_CODES.SYSTEM[730])
     const [rows]: any = await dbConfig.mysqlPool.query('SELECT * FROM messages ORDER BY id');
     return rows;
   },
 
   async getByChatId(chatId: number): Promise<messages[]> {
-    if (!dbConfig.mysqlPool) throw new Error('Base de datos no inicializada');
+    if (!dbConfig.mysqlPool) throw new Error(ERROR_CODES.SYSTEM[730])
     const [rows]: any = await dbConfig.mysqlPool.query(
       'SELECT * FROM messages WHERE chat_id = ? ORDER BY id',
       [chatId]
@@ -18,13 +19,13 @@ export const messagesService = {
   },
 
   async getById(id: number): Promise<messages | null> {
-    if (!dbConfig.mysqlPool) throw new Error('Base de datos no inicializada');
+    if (!dbConfig.mysqlPool) throw new Error(ERROR_CODES.SYSTEM[730])
     const [rows]: any = await dbConfig.mysqlPool.query('SELECT * FROM messages WHERE id = ?', [id]);
     return rows[0] || null;
   },
 
   async create(msg: { chatId: number; remitente: 'usuario' | 'ia'; contenido: string }): Promise<messages> {
-    if (!dbConfig.mysqlPool) throw new Error('Base de datos no inicializada');
+    if (!dbConfig.mysqlPool) throw new Error(ERROR_CODES.SYSTEM[730])
 
     const ahora = new Date();
     const creadoEn = `${ahora.getFullYear()}-${(ahora.getMonth()+1)
@@ -47,7 +48,7 @@ export const messagesService = {
   },
 
   async update(id: number, updates: Partial<{ contenido: string }>): Promise<messages | null> {
-    if (!dbConfig.mysqlPool) throw new Error('Base de datos no inicializada');
+    if (!dbConfig.mysqlPool) throw new Error(ERROR_CODES.SYSTEM[730])
 
     const fields: string[] = [];
     const values: any[] = [];
@@ -63,7 +64,7 @@ export const messagesService = {
   },
 
   async delete(id: number): Promise<void> {
-    if (!dbConfig.mysqlPool) throw new Error('Base de datos no inicializada');
+    if (!dbConfig.mysqlPool) throw new Error(ERROR_CODES.SYSTEM[730])
     await dbConfig.mysqlPool.query('DELETE FROM messages WHERE id = ?', [id]);
   },
 };

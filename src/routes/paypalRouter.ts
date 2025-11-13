@@ -1,3 +1,4 @@
+import { ERROR_CODES } from "../utils/codes";
 import { Router } from "express";
 import { createOrder, captureOrder } from "../services/paypalService.js";
 
@@ -18,7 +19,7 @@ router.post("/create-order", async (req, res) => {
     });
   } catch (err: any) {
     console.error(err.response?.data || err.message);
-    res.status(500).json({ error: "Error al crear la orden de PayPal" });
+    throw new Error(ERROR_CODES.PAYMENTS[700])
   }
 });
 
@@ -36,7 +37,7 @@ router.post("/capture-order/:id", async (req, res) => {
     });
   } catch (err: any) {
     console.error(err.response?.data || err.message);
-    res.status(500).json({ error: "Error al capturar el pago" });
+    throw new Error(ERROR_CODES.PAYMENTS[710])
   }
 });
 

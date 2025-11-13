@@ -1,3 +1,4 @@
+import { ERROR_CODES } from "../utils/codes";
 import express from 'express';
 import type { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
@@ -17,23 +18,23 @@ const mysqlPool = dbConfig.mysqlPool;
 router.post('/login', async (req: Request, res: Response) => {
   const { email, password } = req.body;
   if (!email || !password)
-    return res.status(400).json({ error: 'Email y contraseña son obligatorios' });
+    throw new Error(ERROR_CODES.AUTH[685]);
 
   try {
     let user: any = null;
 
     if (isProd && supabase) {
       const { data, error } = await supabase.from('users').select('*').eq('email', email).single();
-      if (error || !data) return res.status(404).json({ error: 'Usuario no encontrado' });
+      if (error || !data) throw new Error(ERROR_CODES.USERS[620]);
       user = data;
     } else if (!isProd && mysqlPool) {
       const [rows]: any = await mysqlPool.query('SELECT * FROM users WHERE email = ?', [email]);
-      if (!rows.length) return res.status(404).json({ error: 'Usuario no encontrado' });
+      if (!rows.length) throw new Error(ERROR_CODES.USERS[620]);
       user = rows[0];
     }
 
     const validPassword = await bcrypt.compare(password, user.password_hash);
-    if (!validPassword) return res.status(401).json({ error: 'Contraseña incorrecta' });
+    if (!validPassword) throw new Error(ERROR_CODES.AUTH[688])
 
     const accessToken = jwtUtils.generateAccessToken(user);
     const refreshToken = jwtUtils.generateRefreshToken(user);
@@ -48,7 +49,7 @@ router.post('/login', async (req: Request, res: Response) => {
     return res.status(200).json({ message: 'Inicio de sesión exitoso', accessToken, refreshToken });
   } catch (err: any) {
     logger.warn(err);
-    return res.status(500).json({ error: 'Error en el servidor', details: err.message });
+    throw new Error(ERROR_CODES.AUTH[685])
   }
 });
 
@@ -57,18 +58,18 @@ router.post('/login', async (req: Request, res: Response) => {
 // ==============================
 router.post('/refresh', async (req: Request, res: Response) => {
   const { refreshToken } = req.body;
-  if (!refreshToken) return res.status(400).json({ error: 'Refresh token requerido' });
+  if (!refreshToken) throw new Error(ERROR_CODES.AUTH[689])
 
   try {
     let user: any = null;
 
     if (isProd && supabase) {
       const { data, error } = await supabase.from('users').select('*').eq('token_refresh', refreshToken).single();
-      if (error || !data) return res.status(403).json({ error: 'Token no válido' });
+      if (error || !data) throw new Error(ERROR_CODES.AUTH[681])
       user = data;
     } else if (!isProd && mysqlPool) {
       const [rows]: any = await mysqlPool.query('SELECT * FROM users WHERE token_refresh = ?', [refreshToken]);
-      if (!rows.length) return res.status(403).json({ error: 'Token no válido' });
+      if (!rows.length) throw new Error(ERROR_CODES.AUTH[681])
       user = rows[0];
     }
 
@@ -78,7 +79,7 @@ router.post('/refresh', async (req: Request, res: Response) => {
     const newAccessToken = jwtUtils.generateAccessToken(user);
     return res.status(200).json({ message: 'Token renovado correctamente', accessToken: newAccessToken });
   } catch (err: any) {
-    return res.status(403).json({ error: 'Refresh token inválido o expirado', details: err.message });
+    throw new Error(ERROR_CODES.AUTH[680]) // o 681 según el caso
   }
 });
 
@@ -87,7 +88,7 @@ router.post('/refresh', async (req: Request, res: Response) => {
 // ==============================
 router.post('/logout', async (req: Request, res: Response) => {
   const { refreshToken } = req.body;
-  if (!refreshToken) return res.status(400).json({ error: 'Refresh token requerido' });
+  if (!refreshToken) throw new Error(ERROR_CODES.AUTH[689])
 
   try {
     if (isProd && supabase) {
@@ -98,7 +99,7 @@ router.post('/logout', async (req: Request, res: Response) => {
 
     return res.status(200).json({ message: 'Sesión cerrada correctamente' });
   } catch (err: any) {
-    return res.status(500).json({ error: err.message });
+    throw new Error(ERROR_CODES.SYSTEM[729])
   }
 });
 
@@ -113,7 +114,7 @@ router.get('/profile', requireAuth, async (req: Request, res: Response) => {
     const user = (req as any).auth;
     res.status(200).json({ message: 'Perfil accedido correctamente', user });
   } catch (err: any) {
-    res.status(500).json({ error: err.message });
+    throw new Error(ERROR_CODES.SYSTEM[729])
   }
 });
 

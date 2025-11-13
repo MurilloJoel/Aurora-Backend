@@ -1,3 +1,4 @@
+import { ERROR_CODES } from "../utils/codes";
 import jwt, { Secret } from 'jsonwebtoken';
 import { expressjwt } from 'express-jwt';
 import dotenv from 'dotenv';
@@ -9,8 +10,8 @@ const REFRESH_TOKEN_SECRET: Secret = process.env.REFRESH_TOKEN_SECRET as Secret;
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '2h';
 const REFRESH_TOKEN_EXPIRES_IN = process.env.REFRESH_TOKEN_EXPIRES_IN || '7d';
 
-if (!JWT_SECRET) throw new Error('❌ Falta JWT_SECRET en .env');
-if (!REFRESH_TOKEN_SECRET) throw new Error('❌ Falta REFRESH_TOKEN_SECRET en .env');
+if (!JWT_SECRET) throw new Error(ERROR_CODES.AUTH[682])
+if (!REFRESH_TOKEN_SECRET) throw new Error(ERROR_CODES.AUTH[689])
 
 export const jwtUtils = {
   generateAccessToken(user: any) {
