@@ -1,4 +1,4 @@
-import { ERROR_CODES } from "../utils/codes";
+import { ERROR_CODES } from "../utils/codes.js";
 import { Request, Response } from 'express';
 import { userService } from '../services/usersService';
 import logger from '../utils/logger.js';

@@ -1,4 +1,4 @@
-import { ERROR_CODES } from "../utils/codes";
+import { ERROR_CODES } from "../utils/codes.js";
 import { Router } from "express";
 import { createOrder, captureOrder } from "../services/paypalService.js";
 

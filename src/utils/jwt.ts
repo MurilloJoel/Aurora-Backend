@@ -1,4 +1,4 @@
-import { ERROR_CODES } from "../utils/codes";
+import { ERROR_CODES } from "../utils/codes.js";
 import jwt, { Secret } from 'jsonwebtoken';
 import { expressjwt } from 'express-jwt';
 import dotenv from 'dotenv';

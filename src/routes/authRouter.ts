@@ -1,4 +1,4 @@
-import { ERROR_CODES } from "../utils/codes";
+import { ERROR_CODES } from "../utils/codes.js";
 import express from 'express';
 import type { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
