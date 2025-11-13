@@ -18,7 +18,7 @@ export const productsService = {
   async create(data: Omit<products, 'id' | 'creadoEn' | 'actualizadoEn'>): Promise<products> {
     if (!dbConfig.mysqlPool) throw new Error(ERROR_CODES.SYSTEM[730])
     const [result]: any = await dbConfig.mysqlPool.query(
-      'INSERT INTO s (nombre, descripcion, precio, stock, activo) VALUES (?, ?, ?, ?, ?)',
+      'INSERT INTO products (nombre, descripcion, precio, stock, activo) VALUES (?, ?, ?, ?, ?)',
       [data.nombre, data.descripcion || null, data.precio, data.stock, data.activo]
     );
 

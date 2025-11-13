@@ -28,7 +28,7 @@ beforeAll(async () => {
 
 afterAll(async () => {
   // Limpiar usuario de prueba
-  await db.query("DELETE FROM usuarios WHERE email = 'testuser@example.com'");
+  await db.query("DELETE FROM users WHERE email = 'testuser@example.com'");
   await db.end();
 });
 
@@ -49,7 +49,7 @@ describe("🧪 API de Usuarios", () => {
     userId = res.body.data.id;
   });
 
-  it("📋 Debería listar todos los usuarios", async () => {
+  it("📋 Debería listar todos los users", async () => {
     const res = await request(app)
       .get("/users")
       .set("Authorization", `Bearer ${token}`)

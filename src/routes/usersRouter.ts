@@ -17,11 +17,11 @@ const mysqlPool = dbConfig.mysqlPool;
 router.get('/', requireAuth, async (_req: Request, res: Response) => {
   try {
     if (isProd && supabase) {
-      const { data, error } = await supabase.from('usuarios').select('*');
+      const { data, error } = await supabase.from('users').select('*');
       if (error) throw error;
       return res.status(200).json({ message: 'Usuarios obtenidos correctamente', data });
     } else if (!isProd && mysqlPool) {
-      const [rows] = await mysqlPool.query('SELECT * FROM usuarios');
+      const [rows] = await mysqlPool.query('SELECT * FROM users');
       return res.status(200).json({ message: 'Usuarios obtenidos correctamente', data: rows });
     } else {
       throw new Error(ERROR_CODES.SYSTEM[730])

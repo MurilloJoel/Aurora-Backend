@@ -15,18 +15,18 @@ beforeAll(async () => {
 
   // Crear un usuario de prueba exclusivo para mensajes
   const [existing] = await db.query(
-    "SELECT * FROM usuarios WHERE email = 'testuser_messages@example.com'"
+    "SELECT * FROM users WHERE email = 'testuser_messages@example.com'"
   );
 
   if ((existing as any[]).length === 0) {
     await db.query(`
-      INSERT INTO usuarios (nombre, email, password_hash, rol_id, activo)
+      INSERT INTO users (nombre, email, password_hash, rol_id, activo)
       VALUES ('Test User Mensajes', 'testuser_messages@example.com', 'hash', 1, 1)
     `);
   }
 
   const [rows] = await db.query(
-    "SELECT id FROM usuarios WHERE email = 'testuser_messages@example.com'"
+    "SELECT id FROM users WHERE email = 'testuser_messages@example.com'"
   );
   userId = (rows as any[])[0].id;
 
@@ -63,7 +63,7 @@ afterAll(async () => {
   // Limpiar chat
   await db.query("DELETE FROM chats WHERE id = ?", [chatId]);
   // Limpiar usuario
-  await db.query("DELETE FROM usuarios WHERE id = ?", [userId]);
+  await db.query("DELETE FROM users WHERE id = ?", [userId]);
 });
 
 describe("💬 API de Mensajes", () => {
