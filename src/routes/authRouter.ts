@@ -2,8 +2,8 @@ import express from 'express';
 import type { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import { dbConfig } from '../config/db.js';
-import { jwtUtils } from '../util/jwt.js';
-import logger from '../util/logger.js';
+import { jwtUtils } from '../utils/jwt.js';
+import logger from '../utils/logger.js';
 
 const router = express.Router();
 
@@ -105,7 +105,7 @@ router.post('/logout', async (req: Request, res: Response) => {
 // ==============================
 // 👤 GET /profile → Ruta protegida con JWT
 // ==============================
-import { requireAuth } from '../util/jwt.js';
+import { requireAuth } from '../utils/jwt.js';
 
 
 router.get('/profile', requireAuth, async (req: Request, res: Response) => {

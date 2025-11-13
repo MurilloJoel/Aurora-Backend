@@ -2,7 +2,7 @@ import express from 'express';
 import type { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import { dbConfig } from '../config/db.js';
-import { requireAuth } from '../util/jwt.js';
+import { requireAuth } from '../utils/jwt.js';
 
 const router = express.Router();
 

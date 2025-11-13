@@ -164,7 +164,7 @@ export type ErrorLabel = (typeof ERROR_CODES)[ErrorCategory][ErrorCode];
 /**
  * ✅ Ejemplo de uso:
  * 
- * import { ERROR_CODES } from "@/config/codes";
+ * import { ERROR_CODES } from "@/utils/codes";
  * 
  * throw new Error(ERROR_CODES.AUTH[681]); // → "JWT_INVALID"
  */

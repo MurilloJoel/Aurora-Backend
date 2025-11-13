@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import { Pool } from "pg";
 import mysql from "mysql2/promise";
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
-import logger from "../util/logger.js";
+import logger from "../utils/logger.js";
 
 dotenv.config();
 

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { chatService } from '../services/chatsService.js';
-import logger from '../util/logger.js';
+import logger from '../utils/logger.js';
 
 export const getChats = async (req: Request, res: Response) => {
   try {
