@@ -1,39 +1,77 @@
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
-  previewFeatures = ["multiSchema"]
 }
 
 datasource db {
   provider     = "postgresql"
   url          = env("DATABASE_URL")
+  schemas = ["dev", "prod"]
   relationMode = "prisma"
 }
 
-model chats {
+model chatsDev {
   id             Int      @id @default(autoincrement())
   usuario_id     Int
   titulo         String
   creado_en      DateTime @default(now())
   actualizado_en DateTime
-}
 
-model invalid_tokens {
+  @@map("chats")
+  @@schema("dev")
+}
+model chatsProd {
+  id             Int      @id @default(autoincrement())
+  usuario_id     Int
+  titulo         String
+  creado_en      DateTime @default(now())
+  actualizado_en DateTime
+
+  @@map("chats")
+  @@schema("prod")
+}
+model invalid_tokensDev {
   id            Int       @id @default(autoincrement())
   token         String
-  tipo          TokenTipo
+  tipo          TokenTipoDev
   invalidado_en DateTime
+
+  @@map("invalid_tokens")
+  @@schema("dev")
 }
 
-model messages {
+model invalid_tokensProd {
+  id            Int       @id @default(autoincrement())
+  token         String
+  tipo          TokenTipoProd
+  invalidado_en DateTime
+
+  @@map("invalid_tokens")
+  @@schema("prod")
+}
+model messagesDev {
   id        Int           @id @default(autoincrement())
   chat_id   Int
-  remitente RemitenteTipo
+  remitente RemitenteTipoDev
   contenido String
   creado_en DateTime      @default(now())
+
+  @@map("messages")
+  @@schema("dev")
 }
 
-model products {
+model messagesProd {
+  id        Int           @id @default(autoincrement())
+  chat_id   Int
+  remitente RemitenteTipoProd
+  contenido String
+  creado_en DateTime      @default(now())
+
+  @@map("messages")
+  @@schema("prod")
+}
+
+model productsDev {
   id               Int      @id @default(autoincrement())
   nombre           String
   descripcion      String?
@@ -44,9 +82,27 @@ model products {
   actualizado_en   DateTime
   img_url          String
   product_category Int?
+
+  @@map("products")
+  @@schema("dev")
 }
 
-model users {
+model productsProd {
+  id               Int      @id @default(autoincrement())
+  nombre           String
+  descripcion      String?
+  precio           Float
+  stock            Int
+  activo           Boolean
+  creado_en        DateTime @default(now())
+  actualizado_en   DateTime
+  img_url          String
+  product_category Int?
+
+  @@map("products")
+  @@schema("prod")
+}
+model usersDev {
   id             Int       @id @default(autoincrement())
   nombre         String
   email          String    @unique
@@ -58,30 +114,93 @@ model users {
   creado_en      DateTime  @default(now())
   actualizado_en DateTime
   activo         Boolean
+
+  @@map("users")
+  @@schema("dev")
 }
 
-model product_categories {
+model usersProd {
+  id             Int       @id @default(autoincrement())
+  nombre         String
+  email          String    @unique
+  password_hash  String
+  rol_id         Int
+  token_jwt      String?
+  token_refresh  String?
+  ultimo_login   DateTime?
+  creado_en      DateTime  @default(now())
+  actualizado_en DateTime
+  activo         Boolean
+
+  @@map("users")
+  @@schema("prod")
+}
+
+model product_categoriesDev {
   id      Int     @id @default(autoincrement())
   nombre  String?
   img_url String
+
+  @@map("product_categories")
+  @@schema("dev")
 }
 
-enum RemitenteTipo {
+model product_categoriesProd {
+  id      Int     @id @default(autoincrement())
+  nombre  String?
+  img_url String
+
+  @@map("product_categories")
+  @@schema("prod")
+}
+enum RemitenteTipoDev {
   usuario
   ia
+
+  @@schema("dev")
 }
 
-enum TokenTipo {
-  access
-  refresh
-}
-
-enum remitente_enum {
+enum RemitenteTipoProd {
   usuario
   ia
+
+  @@schema("prod")
 }
 
-enum tipo_token_enum {
+enum TokenTipoDev {
   access
   refresh
+
+  @@schema("dev")
+}
+
+enum TokenTipoProd {
+  access
+  refresh
+  @@schema("prod")
+}
+enum remitente_enumDev {
+  usuario
+  ia
+
+  @@schema("dev")
+}
+
+enum remitente_enumProd {
+  usuario
+  ia
+
+  @@schema("prod")
+}
+enum tipo_token_enumDev {
+  access
+  refresh
+
+  @@schema("dev")
+}
+enum tipo_token_enumProd {
+  access
+  refresh
+
+  @@schema("prod")
 }
