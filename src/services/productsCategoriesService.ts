@@ -5,20 +5,20 @@ const prisma = new PrismaClient();
 
 export const productCategoriesService = {
   async getAll() {
-    return prisma.product_categories.findMany({ orderBy: { id: "asc" } });
+    return prisma.product_categoriesDev.findMany({ orderBy: { id: "asc" } });
   },
 
   async getById(id: number) {
-    return prisma.product_categories.findUnique({ where: { id } });
+    return prisma.product_categoriesDev.findUnique({ where: { id } });
   },
 
   async create(data: { nombre?: string; img_url: string }) {
-    return prisma.product_categories.create({ data });
+    return prisma.product_categoriesDev.create({ data });
   },
 
   async update(id: number, data: any) {
     try {
-      return await prisma.product_categories.update({
+      return await prisma.product_categoriesDev.update({
         where: { id },
         data,
       });
@@ -28,6 +28,6 @@ export const productCategoriesService = {
   },
 
   async delete(id: number) {
-    return prisma.product_categories.delete({ where: { id } });
+    return prisma.product_categoriesDev.delete({ where: { id } });
   },
 };

@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 export const productsService = {
   async getAll() {
     try {
-      return await prisma.products.findMany({
+      return await prisma.productsDev.findMany({
         orderBy: { id: "asc" },
       });
     } catch (err) {
@@ -16,7 +16,7 @@ export const productsService = {
 
   async getById(id: number) {
     try {
-      return await prisma.products.findUnique({
+      return await prisma.productsDev.findUnique({
         where: { id },
       });
     } catch (err) {
@@ -36,7 +36,7 @@ export const productsService = {
     actualizado_en?: Date | string;
   }) {
     try {
-      return await prisma.products.create({
+      return await prisma.productsDev.create({
         data: {
           nombre: data.nombre,
           descripcion: data.descripcion || null,
@@ -56,7 +56,7 @@ export const productsService = {
 
   async update(id: number, updates: any) {
     try {
-      return await prisma.products.update({
+      return await prisma.productsDev.update({
         where: { id },
         data: updates,
       });
@@ -67,7 +67,7 @@ export const productsService = {
 
   async delete(id: number) {
     try {
-      await prisma.products.delete({ where: { id } });
+      await prisma.productsDev.delete({ where: { id } });
     } catch (err) {
       throw new Error(ERROR_CODES.SYSTEM[730]);
     }
