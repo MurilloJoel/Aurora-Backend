@@ -1,6 +1,7 @@
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
+  previewFeatures = ["multiSchema"]
 }
 
 datasource db {
@@ -33,14 +34,16 @@ model messages {
 }
 
 model products {
-  id             Int      @id @default(autoincrement())
-  nombre         String
-  descripcion    String?
-  precio         Float
-  stock          Int
-  activo         Boolean
-  creado_en      DateTime @default(now())
-  actualizado_en DateTime
+  id               Int      @id @default(autoincrement())
+  nombre           String
+  descripcion      String?
+  precio           Float
+  stock            Int
+  activo           Boolean
+  creado_en        DateTime @default(now())
+  actualizado_en   DateTime
+  img_url          String
+  product_category Int?
 }
 
 model users {
@@ -55,6 +58,12 @@ model users {
   creado_en      DateTime  @default(now())
   actualizado_en DateTime
   activo         Boolean
+}
+
+model product_categories {
+  id      Int     @id @default(autoincrement())
+  nombre  String?
+  img_url String
 }
 
 enum RemitenteTipo {

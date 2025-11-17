@@ -26,12 +26,22 @@ export const getProductById = async (req: Request, res: Response) => {
 
 export const createProduct = async (req: Request, res: Response) => {
   try {
-    const { nombre, descripcion, precio, stock, activo = true } = req.body;
+    const { nombre, descripcion, precio, stock, activo = true, img_url, product_category } = req.body;
+
     if (!nombre || precio == null || stock == null) {
-      throw new Error(ERROR_CODES.SYSTEM[732])
+      throw new Error(ERROR_CODES.SYSTEM[732]);
     }
 
-    const newProduct = await productsService.create({ nombre, descripcion, precio, stock, activo });
+    const newProduct = await productsService.create({
+      nombre,
+      descripcion,
+      precio,
+      stock,
+      activo,
+      img_url,
+      product_category,
+    });
+
     res.status(201).json({ message: 'Producto creado correctamente', data: newProduct });
   } catch (error: any) {
     logger.warn(error);
@@ -42,8 +52,13 @@ export const createProduct = async (req: Request, res: Response) => {
 export const updateProduct = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
+
     const updatedProduct = await productsService.update(Number(id), req.body);
-    if (!updatedProduct) return res.status(404).json({ error: 'Producto no encontrado' });
+
+    if (!updatedProduct) {
+      return res.status(404).json({ error: 'Producto no encontrado' });
+    }
+
     res.status(200).json({ message: 'Producto actualizado correctamente', data: updatedProduct });
   } catch (error: any) {
     logger.warn(error);
