@@ -2,6 +2,7 @@ node_modules
 dist
 .env
 logs
+/src/generated/prisma
 migration.sql
 prismaClient.ts
 test-prisma.ts
