@@ -3,10 +3,15 @@ import { ERROR_CODES } from "../utils/codes.js";
 
 const prisma = new PrismaClient();
 
+const isProd = process.env.NODE_ENV === "production";
+
+// Seleccionar automáticamente la tabla correcta
+const ProductsModel = isProd ? prisma.productsProd : prisma.productsDev;
+
 export const productsService = {
   async getAll() {
     try {
-      return await prisma.productsDev.findMany({
+      return await ProductsModel.findMany({
         orderBy: { id: "asc" },
       });
     } catch (err) {
@@ -16,7 +21,7 @@ export const productsService = {
 
   async getById(id: number) {
     try {
-      return await prisma.productsDev.findUnique({
+      return await ProductsModel.findUnique({
         where: { id },
       });
     } catch (err) {
@@ -36,7 +41,7 @@ export const productsService = {
     actualizado_en?: Date | string;
   }) {
     try {
-      return await prisma.productsDev.create({
+      return await ProductsModel.create({
         data: {
           nombre: data.nombre,
           descripcion: data.descripcion || null,
@@ -56,7 +61,7 @@ export const productsService = {
 
   async update(id: number, updates: any) {
     try {
-      return await prisma.productsDev.update({
+      return await ProductsModel.update({
         where: { id },
         data: updates,
       });
@@ -67,7 +72,7 @@ export const productsService = {
 
   async delete(id: number) {
     try {
-      await prisma.productsDev.delete({ where: { id } });
+      await ProductsModel.delete({ where: { id } });
     } catch (err) {
       throw new Error(ERROR_CODES.SYSTEM[730]);
     }

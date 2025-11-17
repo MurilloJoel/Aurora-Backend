@@ -3,22 +3,29 @@ import { ERROR_CODES } from "../utils/codes.js";
 
 const prisma = new PrismaClient();
 
+const isProd = process.env.NODE_ENV === "production";
+
+// Seleccionar automáticamente la tabla correcta
+const CategoriesModel = isProd
+  ? prisma.product_categoriesProd
+  : prisma.product_categoriesDev;
+
 export const productCategoriesService = {
   async getAll() {
-    return prisma.product_categoriesDev.findMany({ orderBy: { id: "asc" } });
+    return CategoriesModel.findMany({ orderBy: { id: "asc" } });
   },
 
   async getById(id: number) {
-    return prisma.product_categoriesDev.findUnique({ where: { id } });
+    return CategoriesModel.findUnique({ where: { id } });
   },
 
   async create(data: { nombre?: string; img_url: string }) {
-    return prisma.product_categoriesDev.create({ data });
+    return CategoriesModel.create({ data });
   },
 
   async update(id: number, data: any) {
     try {
-      return await prisma.product_categoriesDev.update({
+      return await CategoriesModel.update({
         where: { id },
         data,
       });
@@ -28,6 +35,6 @@ export const productCategoriesService = {
   },
 
   async delete(id: number) {
-    return prisma.product_categoriesDev.delete({ where: { id } });
+    return CategoriesModel.delete({ where: { id } });
   },
 };
