@@ -5,8 +5,8 @@ const prisma = new PrismaClient();
 
 const isProd = process.env.NODE_ENV === "production";
 
-// Seleccionar automáticamente la tabla correcta
-const CategoriesModel = isProd
+// ⚠️ Tipo ANY para evitar union types de Prisma
+const CategoriesModel: any = isProd
   ? prisma.product_categoriesProd
   : prisma.product_categoriesDev;
 

@@ -5,8 +5,10 @@ const prisma = new PrismaClient();
 
 const isProd = process.env.NODE_ENV === "production";
 
-// Seleccionar automáticamente la tabla correcta
-const ProductsModel = isProd ? prisma.productsProd : prisma.productsDev;
+// ⚠️ Tipo ANY para evitar union types de Prisma
+const ProductsModel: any = isProd
+  ? prisma.productsProd
+  : prisma.productsDev;
 
 export const productsService = {
   async getAll() {
