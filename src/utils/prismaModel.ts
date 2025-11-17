@@ -1,13 +1,11 @@
 import { PrismaClient } from "@prisma/client";
 
 /**
- * Selecciona dinámicamente un modelo según el entorno (Dev o Prod).
- *
- * @param prisma Instancia de PrismaClient
- * @param baseName Nombre base del modelo (sin "Dev" ni "Prod")
- * @returns Modelo Prisma correspondiente al entorno
+ * Selecciona dinámicamente el modelo Dev o Prod.
+ * Para evitar errores de tipos UNION en TypeScript (TS2349),
+ * devolvemos "any" porque los modelos Dev/Prod tienen firmas distintas.
  */
-export function prismaModel(prisma: PrismaClient, baseName: string) {
+export function prismaModel(prisma: PrismaClient, baseName: string): any {
   const isProd = process.env.NODE_ENV === "production";
   const suffix = isProd ? "Prod" : "Dev";
   const modelName = `${baseName}${suffix}`;
