@@ -6,7 +6,6 @@
   "scripts": {
     "dev": "nodemon --watch src --ext ts --exec tsx ./src/bin/www.ts",
     "build": "tsc",
-    "copy-prisma": "cp -R src/generated dist/generated",
     "start": "node ./dist/bin/www.js",
     "serve": "npm run build && node ./dist/bin/www.js",
     "lint": "tsc --noEmit",
