@@ -1,4 +1,4 @@
-import { PrismaClient } from "../generated/prisma";
+import { PrismaClient } from "@prisma/client";
 import { ERROR_CODES } from "../utils/codes.js";
 
 const prisma = new PrismaClient();
