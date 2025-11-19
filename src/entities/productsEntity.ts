@@ -7,4 +7,6 @@ export interface products {
     activo: boolean;
     creadoEn: Date;
     actualizadoEn: Date;
+    imgUrl?: string;
+    product_category?: string;
 }

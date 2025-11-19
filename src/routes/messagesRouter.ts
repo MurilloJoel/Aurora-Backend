@@ -1,6 +1,6 @@
 import express from 'express';
 import { dbConfig } from '../config/db.js';
-import { requireAuth } from '../util/jwt.js';
+import { requireAuth } from '../utils/jwt.js';
 
 const router = express.Router();
 

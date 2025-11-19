@@ -1,7 +1,7 @@
 import { ERROR_CODES } from "../utils/codes.js";
 import { Request, Response } from 'express';
 import { productsService } from '../services/productsService.js';
-import logger from '../util/logger.js';
+import logger from '../utils/logger.js';
 
 export const getProducts = async (_req: Request, res: Response) => {
   try {
@@ -26,7 +26,7 @@ export const getProductById = async (req: Request, res: Response) => {
 
 export const createProduct = async (req: Request, res: Response) => {
   try {
-    const { nombre, descripcion, precio, stock, activo = true } = req.body;
+    const { nombre, descripcion, precio, stock, activo = true, imgUrl, product_category } = req.body;
     if (!nombre || precio == null || stock == null) {
       return res.status(400).json({ error: 'Faltan campos obligatorios' });
     }
@@ -37,7 +37,7 @@ export const createProduct = async (req: Request, res: Response) => {
       precio,
       stock,
       activo,
-      img_url,
+      imgUrl,
       product_category,
     });
 

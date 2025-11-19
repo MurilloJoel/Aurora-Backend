@@ -1,7 +1,7 @@
 import { ERROR_CODES } from '../utils/codes.js';
 import { Request, Response } from 'express';
 import { messagesService } from '../services/messagesService.js';
-import logger from '../util/logger.js';
+import logger from '../utils/logger.js';
 
 export const getMessages = async (_req: Request, res: Response) => {
   try {
