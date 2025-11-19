@@ -49,19 +49,30 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-router.get('/:product_category', async (req, res) => {
+// GET /products/category/:product_category → Obtener productos por categoría
+router.get('/category/:product_category', async (req, res) => {
   const { product_category } = req.params;
   try {
     let products;
     if (isProd && supabase) {
-      const { data, error } = await supabase.from('products').select('*').eq('product_category', product_category);
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .eq('product_category', product_category);
+
       if (error) throw error;
       products = data;
+
     } else if (!isProd && mysqlPool) {
-      const [rows]: any = await mysqlPool.query('SELECT * FROM products WHERE product_category = ?', [product_category]);
+      const [rows]: any = await mysqlPool.query(
+        'SELECT * FROM products WHERE product_category = ?',
+        [product_category]
+      );
       products = rows;
     }
+
     res.status(200).json({ message: 'Productos obtenidos correctamente', data: products });
+
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }
