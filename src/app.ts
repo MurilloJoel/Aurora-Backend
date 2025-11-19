@@ -12,6 +12,7 @@ import productsRouter from './routes/productsRouter.js';
 import authRouter from './routes/authRouter.js';
 import chatsRoutes from './routes/chatsRouter.js';
 import paypalRouter from "./routes/paypalRouter.js";
+import categoriesRouter from './routes/productCategoriesRouter.js';
 
 import { corsMiddleware } from './middlewares/cors.js';
 
@@ -49,8 +50,10 @@ app.use('/auth', authRouter);     // Auth
 app.use('/users', usersRouter);   // Usuarios
 app.use('/messages', messagesRouter); // Mensajes
 app.use('/products', productsRouter); // Productos
+app.use('/categories', categoriesRouter); // Categorias
 app.use('/chats', chatsRoutes);       // Chats
 app.use('/api/payments', paypalRouter); // PayPal
+
 
 
 // =============================
