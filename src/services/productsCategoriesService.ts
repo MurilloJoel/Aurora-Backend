@@ -1,40 +1,16 @@
-import { PrismaClient } from "@prisma/client";
-import { ERROR_CODES } from "../utils/codes.js";
+import { dbConfig } from '../config/db.js';
+import type { productsCategories } from '../entities/productsCategoriesEntity.js';
 
-const prisma = new PrismaClient();
+export const productsCategoriesService = {
+  async getAll(): Promise<productsCategories[]> {
+    if (!dbConfig.supabase) throw new Error('Base de datos no inicializada');
+    const { data, error } = await dbConfig.supabase
+      .from('product_categories')
+      .select('*')
+      .order('id', { ascending: true });
 
-const isProd = process.env.NODE_ENV === "production";
-
-// ⚠️ Tipo ANY para evitar union types de Prisma
-const CategoriesModel: any = isProd
-  ? prisma.product_categoriesProd
-  : prisma.product_categoriesDev;
-
-export const productCategoriesService = {
-  async getAll() {
-    return CategoriesModel.findMany({ orderBy: { id: "asc" } });
-  },
-
-  async getById(id: number) {
-    return CategoriesModel.findUnique({ where: { id } });
-  },
-
-  async create(data: { nombre?: string; img_url: string }) {
-    return CategoriesModel.create({ data });
-  },
-
-  async update(id: number, data: any) {
-    try {
-      return await CategoriesModel.update({
-        where: { id },
-        data,
-      });
-    } catch {
-      return null;
-    }
-  },
-
-  async delete(id: number) {
-    return CategoriesModel.delete({ where: { id } });
-  },
+    if (error) throw new Error('Error fetching categories');
+    return data as productsCategories[];
+  }
 };
+  
