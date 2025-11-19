@@ -9,7 +9,6 @@ export const chatService = {
     const { data, error } = await supabase.from('chats').select('*').order('id', { ascending: true });
     if (error) throw new Error('Error fetching chats');
     return data as Chat[];
-<<<<<<< HEAD
   },
   async getById(id: number): Promise<Chat | null> {
     const supabase = dbConfig.supabase;
@@ -17,8 +16,6 @@ export const chatService = {
     const { data, error } = await supabase.from('chats').select('*').eq('id', id).single();
     if (error) throw new Error('Error fetching chat by ID');
     return data as Chat | null;
-=======
->>>>>>> c4fff02e4f4ce85eecc48e325ca13bd388c2d5d7
   },
 
   async create(chat: { usuarioId: number; titulo: string }): Promise<Chat> {
