@@ -25,6 +25,17 @@ export const productsService = {
     return data as products | null;
   },
 
+  async getByCategory(category: string): Promise<products[]> {
+    if (!dbConfig.supabase) throw new Error('Base de datos no inicializada');
+    const { data, error } = await dbConfig.supabase
+      .from('products')
+      .select('*')
+      .eq('product_category', category);
+
+    if (error) throw new Error('Error fetching products by category');
+    return data as products[];
+  },
+
   async create(data: Omit<products, 'id' | 'creadoEn' | 'actualizadoEn'>): Promise<products> {
     if (!dbConfig.supabase) throw new Error('Base de datos no inicializada');
       const { data: createdData, error } = await dbConfig.supabase.from('products').insert([data]).select().single();

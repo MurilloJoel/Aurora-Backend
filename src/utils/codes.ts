@@ -33,7 +33,6 @@ export const ERROR_CODES = {
     628: "USER_SESSION_EXPIRED",
     629: "USER_PASSWORD_WEAK",
     630: "USER_FINDING_FAILED",
-    
   },
   CHATS: {
     640: "CHAT_NOT_FOUND",
