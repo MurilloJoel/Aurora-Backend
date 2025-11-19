@@ -3,94 +3,72 @@ import { dbConfig } from '../config/db.js';
 import bcrypt from 'bcrypt';
 import { users } from '../entities/usersEntity.js';
 
-// Helper para obtener el pool de manera segura
-function getPool() {
-  if (!dbConfig.pgPool) throw new Error(ERROR_CODES.SYSTEM[733])
-  return dbConfig.pgPool;
-}
 
-// Mapea fila de DB (snake_case) a objeto TS (camelCase)
-function mapUserRow(row: any): users {
-  return {
-    id: row.id,
-    nombre: row.nombre,
-    email: row.email,
-    passwordHash: row.password_hash,
-    rolId: row.rol_id,
-    tokenJwt: row.token_jwt,
-    tokenRefresh: row.token_refresh,
-    ultimoLogin: row.ultimo_login,
-    creadoEn: row.creado_en,
-    actualizadoEn: row.actualizado_en,
-    activo: row.activo,
-  };
-}
 
 export const userService = {
   async getAll(): Promise<users[]> {
-    const { rows } = await getPool().query(
-      `SELECT id, nombre, email, password_hash, rol_id, token_jwt, token_refresh, ultimo_login, creado_en, actualizado_en, activo 
-       FROM users ORDER BY id`
-    );
-    return rows.map(mapUserRow);
+    if (!dbConfig.supabase) throw new Error('Base de datos no inicializada');
+        const { data, error } = await dbConfig.supabase
+          .from('users')
+          .select('*')
+          .order('id', { ascending: true });
+    
+        if (error) throw new Error('Error fetching products');
+        return data as users[];
   },
 
   async getById(id: number): Promise<users | null> {
-    const { rows } = await getPool().query(
-      `SELECT id, nombre, email, password_hash, rol_id, token_jwt, token_refresh, ultimo_login, creado_en, actualizado_en, activo 
-       FROM users WHERE id = $1`,
-      [id]
-    );
-    return rows[0] ? mapUserRow(rows[0]) : null;
+    if (!dbConfig.supabase) throw new Error('Base de datos no inicializada');
+        const { data, error } = await dbConfig.supabase
+          .from('users')
+          .select('*')
+          .eq('id', id)
+          .single();
+    
+        if (error) throw new Error('Error fetching user by ID');
+        return data as users | null;
   },
 
   async create(user: { nombre: string; email: string; password: string; rolId: number }): Promise<users> {
-    const pool = dbConfig.pgPool!;
-    const password_hash = await bcrypt.hash(user.password, 10);
-    const { rows } = await getPool().query(
-      `INSERT INTO users (nombre, email, password_hash, rol_id, activo)
-       VALUES ($1, $2, $3, $4, TRUE)
-       RETURNING id, nombre, email, password_hash, rol_id, token_jwt, token_refresh, ultimo_login, creado_en, actualizado_en, activo`,
-      [user.nombre, user.email, password_hash, user.rolId]
-    );
-    return mapUserRow(rows[0]);
+    if (!dbConfig.supabase) throw new Error('Base de datos no inicializada');
+    const passwordHash = await bcrypt.hash(user.password, 10);
+      const { data, error } = await dbConfig.supabase.from('users').insert([{
+        nombre: user.nombre,
+        email: user.email,
+        password_hash: passwordHash,
+        rol_id: user.rolId,
+        activo: true
+      }]).select().single();
+    if (error) throw new Error('Error creating user');
+    return data as users;
   },
 
   async update(
     id: number,
     updates: Partial<{ nombre: string; email: string; password?: string; rolId: number; activo: boolean }>
   ): Promise<users | null> {
-    if (Object.keys(updates).length === 0) return this.getById(id);
+    if (!dbConfig.supabase) throw new Error('Base de datos no inicializada');
 
-    const fields: string[] = [];
-    const values: any[] = [];
-    let index = 1;
-
-    for (const [key, value] of Object.entries(updates)) {
-      let column = key === 'rolId' ? 'rol_id' : key;
-      let val = value;
-
-      if (key === 'password') {
-        column = 'password_hash';
-        val = await bcrypt.hash(value as string, 10);
-      }
-
-      fields.push(`${column} = $${index++}`);
-      values.push(val);
+    const updateData: any = { ...updates };
+    if (updates.password) {
+      updateData.password_hash = await bcrypt.hash(updates.password, 10);
+      delete updateData.password;
     }
 
-    values.push(id);
+    const { data, error } = await dbConfig.supabase
+      .from('users')
+      .update(updateData)
+      .eq('id', id)
+      .select()
+      .single();
 
-    const { rows } = await getPool().query(
-      `UPDATE users SET ${fields.join(', ')}, actualizado_en = NOW() WHERE id = $${index} 
-       RETURNING id, nombre, email, password_hash, rol_id, token_jwt, token_refresh, ultimo_login, creado_en, actualizado_en, activo`,
-      values
-    );
-
-    return rows[0] ? mapUserRow(rows[0]) : null;
+    if (error) throw new Error('Error updating user');
+    return data as users | null;
   },
 
   async delete(id: number): Promise<void> {
-    await getPool().query('DELETE FROM users WHERE id = $1', [id]);
+    if (!dbConfig.supabase) throw new Error('Base de datos no inicializada');
+    const { error } = await dbConfig.supabase.from('users').delete().eq('id', id);
+    if (error) throw new Error('Error deleting user');
   },
 };

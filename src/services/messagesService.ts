@@ -4,29 +4,41 @@ import type { messages } from '../entities/messagesEntity.js';
 
 export const messagesService = {
   async getAll(): Promise<messages[]> {
-    if (!dbConfig.mysqlPool) throw new Error(ERROR_CODES.SYSTEM[730])
-    const [rows]: any = await dbConfig.mysqlPool.query('SELECT * FROM messages ORDER BY id');
-    return rows;
+    if (!dbConfig.supabase) throw new Error(ERROR_CODES.SYSTEM[730])
+    const { data, error } = await dbConfig.supabase
+      .from('messages')
+      .select('*')
+      .order('id', { ascending: true });
+
+    if (error) throw new Error('Error fetching messages');
+    return data as messages[];
   },
 
   async getByChatId(chatId: number): Promise<messages[]> {
-    if (!dbConfig.mysqlPool) throw new Error(ERROR_CODES.SYSTEM[730])
-    const [rows]: any = await dbConfig.mysqlPool.query(
-      'SELECT * FROM messages WHERE chat_id = ? ORDER BY id',
-      [chatId]
-    );
-    return rows; // Nota: en el controlador ahora chequeamos si está vacío
+    if (!dbConfig.supabase) throw new Error(ERROR_CODES.SYSTEM[730])
+    const { data, error } = await dbConfig.supabase
+      .from('messages')
+      .select('*')
+      .eq('chat_id', chatId)
+      .order('id', { ascending: true });
+
+    if (error) throw new Error('Error fetching messages by chat ID');
+    return data as messages[];
   },
 
   async getById(id: number): Promise<messages | null> {
-    if (!dbConfig.mysqlPool) throw new Error(ERROR_CODES.SYSTEM[730])
-    const [rows]: any = await dbConfig.mysqlPool.query('SELECT * FROM messages WHERE id = ?', [id]);
-    return rows[0] || null;
+    if (!dbConfig.supabase) throw new Error(ERROR_CODES.SYSTEM[730])
+    const { data, error } = await dbConfig.supabase
+      .from('messages')
+      .select('*')
+      .eq('id', id)
+      .single();
+    if (error) throw new Error('Error fetching message by ID');
+    return data as messages | null;
   },
 
   async create(msg: { chatId: number; remitente: 'usuario' | 'ia'; contenido: string }): Promise<messages> {
-    if (!dbConfig.mysqlPool) throw new Error(ERROR_CODES.SYSTEM[730])
-
+    if (!dbConfig.supabase) throw new Error(ERROR_CODES.SYSTEM[730])
     const ahora = new Date();
     const creadoEn = `${ahora.getFullYear()}-${(ahora.getMonth()+1)
       .toString()
@@ -38,33 +50,43 @@ export const messagesService = {
       .toString()
       .padStart(2, '0')}`;
 
-    const [result]: any = await dbConfig.mysqlPool.query(
-      'INSERT INTO messages (chat_id, remitente, contenido, creado_en) VALUES (?,?,?,?)',
-      [msg.chatId, msg.remitente, msg.contenido, creadoEn]
-    );
+    const { data, error } = await dbConfig.supabase
+      .from('messages')
+      .insert([{ chat_id: msg.chatId, remitente: msg.remitente, contenido: msg.contenido, creado_en: creadoEn }])
+      .select()
+      .single();
 
-    const [rows]: any = await dbConfig.mysqlPool.query('SELECT * FROM messages WHERE id = ?', [result.insertId]);
-    return rows[0];
+    if (error) throw new Error('Error creating message');
+    return data as messages;
   },
 
   async update(id: number, updates: Partial<{ contenido: string }>): Promise<messages | null> {
-    if (!dbConfig.mysqlPool) throw new Error(ERROR_CODES.SYSTEM[730])
+    if (!dbConfig.supabase) throw new Error(ERROR_CODES.SYSTEM[730])
 
-    const fields: string[] = [];
-    const values: any[] = [];
-    for (const [key, value] of Object.entries(updates)) {
-      fields.push(`${key} = ?`);
-      values.push(value);
+    // If there are no updates, return the existing message
+    if (Object.keys(updates).length === 0) {
+      return await this.getById(id);
     }
-    values.push(id);
 
-    await dbConfig.mysqlPool.query(`UPDATE messages SET ${fields.join(', ')} WHERE id=?`, values);
-    const [rows]: any = await dbConfig.mysqlPool.query('SELECT * FROM messages WHERE id = ?', [id]);
-    return rows[0] || null;
+    const { data, error } = await dbConfig.supabase
+      .from('messages')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw new Error('Error updating message');
+    return data as messages | null;
   },
 
   async delete(id: number): Promise<void> {
-    if (!dbConfig.mysqlPool) throw new Error(ERROR_CODES.SYSTEM[730])
-    await dbConfig.mysqlPool.query('DELETE FROM messages WHERE id = ?', [id]);
+    if (!dbConfig.supabase) throw new Error(ERROR_CODES.SYSTEM[730])
+
+    const { error } = await dbConfig.supabase
+      .from('messages')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw new Error('Error deleting message');
   },
 };

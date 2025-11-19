@@ -3,30 +3,38 @@ import type { products } from '../entities/productsEntity.js';
 
 export const productsService = {
   async getAll(): Promise<products[]> {
-    if (!dbConfig.mysqlPool) throw new Error('Base de datos no inicializada');
-    const [rows]: any = await dbConfig.mysqlPool.query('SELECT * FROM products ORDER BY id');
-    return rows;
+    if (!dbConfig.supabase) throw new Error('Base de datos no inicializada');
+    const { data, error } = await dbConfig.supabase
+      .from('products')
+      .select('*')
+      .order('id', { ascending: true });
+
+    if (error) throw new Error('Error fetching products');
+    return data as products[];
   },
 
   async getById(id: number): Promise<products | null> {
-    if (!dbConfig.mysqlPool) throw new Error('Base de datos no inicializada');
-    const [rows]: any = await dbConfig.mysqlPool.query('SELECT * FROM products WHERE id = ?', [id]);
-    return rows[0] || null;
+    if (!dbConfig.supabase) throw new Error('Base de datos no inicializada');
+    const { data, error } = await dbConfig.supabase
+      .from('products')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) throw new Error('Error fetching product by ID');
+    return data as products | null;
   },
 
   async create(data: Omit<products, 'id' | 'creadoEn' | 'actualizadoEn'>): Promise<products> {
-    if (!dbConfig.mysqlPool) throw new Error('Base de datos no inicializada');
-    const [result]: any = await dbConfig.mysqlPool.query(
-      'INSERT INTO s (nombre, descripcion, precio, stock, activo) VALUES (?, ?, ?, ?, ?)',
-      [data.nombre, data.descripcion || null, data.precio, data.stock, data.activo]
-    );
+    if (!dbConfig.supabase) throw new Error('Base de datos no inicializada');
+      const { data: createdData, error } = await dbConfig.supabase.from('products').insert([data]).select().single();
 
-    const [rows]: any = await dbConfig.mysqlPool.query('SELECT * FROM products WHERE id = ?', [result.insertId]);
-    return rows[0];
+    if (error) throw new Error('Error creating product');
+    return createdData as products;
   },
 
   async update(id: number, updates: Partial<Omit<products, 'id'>>): Promise<products | null> {
-    if (!dbConfig.mysqlPool) throw new Error('Base de datos no inicializada');
+    if (!dbConfig.supabase) throw new Error('Base de datos no inicializada');
 
     const fields = [];
     const values: any[] = [];
@@ -36,13 +44,19 @@ export const productsService = {
     }
     values.push(id);
 
-    await dbConfig.mysqlPool.query(`UPDATE products SET ${fields.join(', ')} WHERE id = ?`, values);
-    const [rows]: any = await dbConfig.mysqlPool.query('SELECT * FROM products WHERE id = ?', [id]);
-    return rows[0] || null;
+    await dbConfig.supabase.from('products').update(updates).eq('id', id);
+    const { data, error } = await dbConfig.supabase
+      .from('products')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) throw new Error('Error fetching product by ID');
+    return data as products | null;
   },
 
   async delete(id: number): Promise<void> {
-    if (!dbConfig.mysqlPool) throw new Error('Base de datos no inicializada');
-    await dbConfig.mysqlPool.query('DELETE FROM products WHERE id = ?', [id]);
+    if (!dbConfig.supabase) throw new Error('Base de datos no inicializada');
+    await dbConfig.supabase.from('products').delete().eq('id', id);
   },
 };
