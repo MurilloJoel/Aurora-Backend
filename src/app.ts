@@ -44,12 +44,14 @@ app.use("/api/payments", paypalRouter);
 // =============================
 // 🌐 Rutas principales
 // =============================
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/messages', messagesRouter);
-app.use('/products', productsRouter);
-app.use('/', authRouter);
-app.use('/chats', chatsRoutes);
+app.use('/', indexRouter);        // Página principal
+app.use('/auth', authRouter);     // Auth
+app.use('/users', usersRouter);   // Usuarios
+app.use('/messages', messagesRouter); // Mensajes
+app.use('/products', productsRouter); // Productos
+app.use('/chats', chatsRoutes);       // Chats
+app.use('/api/payments', paypalRouter); // PayPal
+
 
 // =============================
 // ⚠️ Manejo de errores

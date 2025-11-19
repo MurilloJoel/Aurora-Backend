@@ -3,34 +3,37 @@ import { Request, Response } from 'express';
 import { userService } from '../services/usersService';
 import logger from '../utils/logger.js';
 
-export const getUsers = async (req: Request, res: Response) => {
+export const getUsers = async (_req: Request, res: Response) => {
   try {
     const users = await userService.getAll();
     res.status(200).json(users);
   } catch (error) {
     logger.warn(error);
-    throw new Error(ERROR_CODES.USERS[630]);
+    res.status(500).json({ error: 'Error al obtener los usuarios' });
   }
 };
 
 export const getUserById = async (req: Request, res: Response) => {
   try {
     const user = await userService.getById(Number(req.params.id));
-    if (!user) throw new Error(ERROR_CODES.USERS[620]);
+    if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
     res.status(200).json(user);
   } catch (error) {
     logger.warn(error);
-    throw new Error(ERROR_CODES.USERS[630]);
+    res.status(500).json({ error: 'Error al obtener el usuario' });
   }
 };
 
 export const createUser = async (req: Request, res: Response) => {
   try {
     const { nombre, email, password, rolId } = req.body;
+    if (!nombre || !email || !password || rolId === undefined)
+      return res.status(400).json({ error: 'Faltan campos obligatorios' });
+
     const newUser = await userService.create({ nombre, email, password, rolId });
     res.status(201).json({ message: 'Usuario creado correctamente', data: newUser });
   } catch (error) {
     logger.warn(error);
-    throw new Error(ERROR_CODES.USERS[625]);
+    res.status(500).json({ error: 'Error al crear el usuario' });
   }
 };
