@@ -1,6 +1,7 @@
 import express from 'express';
 import { requireAuth } from '../utils/jwt.js';
 import { dbConfig } from '../config/db.js';
+import { getProductsPaginated } from '../controllers/productsController.js';
 
 const router = express.Router();
 
@@ -27,6 +28,9 @@ router.get('/', async (_req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+// GET /products/paginated → Obtener productos paginados
+router.get("/paginated", getProductsPaginated);
 
 // GET /products/:id → Obtener producto por id
 router.get('/:id', async (req, res) => {

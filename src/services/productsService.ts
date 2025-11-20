@@ -12,7 +12,17 @@ export const productsService = {
     if (error) throw new Error('Error fetching products');
     return data as products[];
   },
-
+async getAllPaged(page: number, pageSize: number): Promise<{ data: products[]; total: number }> {
+    if (!dbConfig.supabase) throw new Error('Base de datos no inicializada');
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize - 1;
+    const { data, error, count } = await dbConfig.supabase
+      .from('products')
+      .select('*', { count: 'exact' })
+      .range(from, to);
+    if (error) throw new Error('Error fetching products');
+    return { data: data as products[], total: count ?? 0 };
+  },
   async getById(id: number): Promise<products | null> {
     if (!dbConfig.supabase) throw new Error('Base de datos no inicializada');
     const { data, error } = await dbConfig.supabase

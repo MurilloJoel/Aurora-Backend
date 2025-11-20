@@ -13,6 +13,25 @@ export const getProducts = async (_req: Request, res: Response) => {
   }
 };
 
+export const getProductsPaginated = async (req: Request, res: Response) => {
+  try {
+    const page = parseInt(req.query.page as string) || 1;
+    const pageSize = parseInt(req.query.pageSize as string) || 10;
+    if (page < 1 || pageSize < 1) {
+      return res.status(400).json({ message: 'Parámetros de paginación inválidos' });
+    }
+    const result = await productsService.getAllPaged(page, pageSize);
+    res.status(200).json({
+      message: 'Productos obtenidos correctamente',
+      data: result.data,
+      total: result.total
+    });
+  } catch (error: any) {
+    logger.warn(error);
+    res.status(500).json({ error: 'Error al obtener los productos' });
+  }
+};
+
 export const getProductById = async (req: Request, res: Response) => {
   try {
     const product = await productsService.getById(Number(req.params.id));
