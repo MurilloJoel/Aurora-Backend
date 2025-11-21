@@ -64,7 +64,7 @@ router.post("/login", async (req: Request<{}, {}, LoginBody>, res: Response) => 
     res.cookie("access_token", accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: "lax",
       maxAge: 1000 * 60 * 60, // 1 hora
     })
 
@@ -148,7 +148,7 @@ router.post("/register", async (req: Request<{}, {}, RegisterBody>, res: Respons
     res.cookie("access_token", accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: "lax",
       maxAge: 1000 * 60 * 60, // 1 hora
     })
 
@@ -204,7 +204,7 @@ router.post("/refresh", async (req: Request, res: Response) => {
     res.cookie("access_token", newAccessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: "lax",
       maxAge: 1000 * 60 * 60,
     })
 
@@ -232,7 +232,7 @@ router.post("/logout", async (req: Request, res: Response) => {
     res.clearCookie("access_token", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: "lax",
     })
 
     return res.status(200).json({ message: "Sesión cerrada correctamente" })
