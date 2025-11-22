@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 
 const allowedOriginsDev = [
-  'http://localhost:4321',
+  'https://localhost:4321',
   'http://localhost:3000'
 ];
 
