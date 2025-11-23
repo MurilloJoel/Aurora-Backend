@@ -6,7 +6,8 @@ const allowedOriginsDev = [
 ];
 
 const allowedOriginsProd = [
-  'https://tudominio.com'
+  'https://tudominio.com',
+  'https://localhost:4321'
 ];
 
 export const corsMiddleware = (req: Request, res: Response, next: NextFunction) => {
